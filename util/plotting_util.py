@@ -7,8 +7,10 @@ def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', 
     if legend:
         plt.legend(loc=legend_loc)
     plt.tight_layout()
-    if fig_dir:
+    if fig_dir is not None:
         fig.savefig(os.path.join(fig_dir, plot_name + '.png'))
+    else:
+        plt.show();
     plt.close()
 
 
