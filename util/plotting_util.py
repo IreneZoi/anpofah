@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
+from matplotlib import colors
 import os
+
+import anpofah.util.data_preprocessing as dpr
 
 
 def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='', fig_dir=None, legend=[],ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None):
@@ -29,7 +31,13 @@ def plot_hist_on_axis(ax, data, bins, xlabel, ylabel, title, legend=[], ylogscal
         ax.set_xlim(xlim)
 
 
-def plot_hist_2d( x, y, xlabel='x', ylabel='num frac', title='histogram', plot_name='', fig_dir=None, legend=[],ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None):
+def plot_hist_2d( x, y, xlabel='x', ylabel='num frac', title='histogram', plot_name='', fig_dir=None, legend=[],ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None, clip_outlier=False):
+    
+    if clip_outlier:
+        idx = dpr.is_outlier_percentile(x) | dpr.is_outlier_percentile(y)
+        x = x[~idx]
+        y = y[~idx]
+
     fig = plt.figure()
     ax = plt.gca()
     im = plot_hist_2d_on_axis( ax, x, y, xlabel, ylabel, title )
