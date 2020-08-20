@@ -31,7 +31,7 @@ def plot_hist_on_axis(ax, data, bins, xlabel, ylabel, title, legend=[], ylogscal
         ax.set_xlim(xlim)
 
 
-def plot_hist_2d( x, y, xlabel='x', ylabel='num frac', title='histogram', plot_name='', fig_dir=None, legend=[],ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None, clip_outlier=False):
+def plot_hist_2d( x, y, xlabel='x', ylabel='num frac', title='histogram', plot_name='hist2d', fig_dir=None, legend=[],ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None, clip_outlier=False):
     
     if clip_outlier:
         idx = dpr.is_outlier_percentile(x) | dpr.is_outlier_percentile(y)
@@ -44,7 +44,7 @@ def plot_hist_2d( x, y, xlabel='x', ylabel='num frac', title='histogram', plot_n
     fig.colorbar(im[3])
     plt.tight_layout()
     if fig_dir:
-        plt.savefig(os.path.join(fig_dir,plot_name+'_hist2d.png'))
+        plt.savefig(os.path.join(fig_dir,plot_name+'.png'))
     plt.show()
     #plt.close()
     return ax
