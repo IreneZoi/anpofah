@@ -5,7 +5,7 @@ import os
 import anpofah.util.data_preprocessing as dpr
 
 
-def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='', fig_dir=None, legend=[],ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None):
+def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[],ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None):
     fig = plt.figure(figsize=(6, 4))
     plot_hist_on_axis(plt.gca(), data, bins=bins, xlabel=xlabel, ylabel=ylabel, title=title, legend=legend, ylogscale=ylogscale, normed=normed, ylim=ylim, xlim=xlim)
     if legend:
