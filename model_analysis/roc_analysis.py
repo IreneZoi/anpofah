@@ -70,9 +70,9 @@ def plot_ROC_loss_strategy(bg_sample, sig_sample, strategy_ids, fig_dir, title_s
     plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='ROC '+sig_sample.name, plot_name='ROC_'+sig_sample.name, fig_dir=fig_dir, log_x=log_x)
 
 
-def plot_binned_ROC_loss_strategy(bg_sample, sig_sample, mass_center, strategy_ids, fig_dir, log_x=True):
+def plot_binned_ROC_loss_strategy(bg_sample, sig_sample, mass_center, strategy_ids, fig_dir, title_suffix='', log_x=True):
 
 	_, bg_center_bin_sample, _ = get_mjj_binned_sample(bg_sample, mass_center)
 	_, sig_center_bin_sample, _ = get_mjj_binned_sample(sig_sample, mass_center)
 
-	plot_ROC_loss_strategy(bg_center_bin_sample, sig_center_bin_sample, strategy_ids, fig_dir, title_suffix='_mJJ_'+str(mass_center)+'_center_bin_', log_x=log_x)
+	plot_ROC_loss_strategy(bg_center_bin_sample, sig_center_bin_sample, strategy_ids, fig_dir, title_suffix='_mJJ_'+str(mass_center)+'_center_bin_'+title_suffix, log_x=log_x)
