@@ -5,7 +5,7 @@ import os
 import anpofah.util.data_preprocessing as dpr
 
 
-def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[],ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None):
+def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None):
     fig = plt.figure(figsize=(6, 4))
     plot_hist_on_axis(plt.gca(), data, bins=bins, xlabel=xlabel, ylabel=ylabel, title=title, legend=legend, ylogscale=ylogscale, normed=normed, ylim=ylim, xlim=xlim)
     if legend:
@@ -56,3 +56,31 @@ def plot_hist_2d_on_axis( ax, x, y, xlabel, ylabel, title ):
     ax.set_ylabel(ylabel)
     ax.set_title(title)
     return im
+
+
+def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, legend_loc='best'):
+    '''
+    plots feature distribution treating first data-array as backround and rest of arrays as signal
+    :param data: list/array of N elements where first element is assumed to be background and elements 2..N-1 assumed to be signal. all elements = array of length M
+    '''
+    fig = plt.figure(figsize=(6, 4))
+    alpha = 0.4
+    histtype = 'stepfilled'
+    if ylogscale:
+        plt.yscale('log')
+
+    for i, dat in enumerate(data):
+        if i > 0:
+            histtype = 'step'
+            alpha = 1.0
+        plt.hist(dat, bins=bins, normed=normed, alpha=alpha, histtype=histtype, label=legend[i])
+
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
+    plt.title(title)
+    plt.legend(loc=legend_loc)
+    plt.tight_layout()
+    plt.draw()
+    if fig_dir:
+        fig.savefig(os.path.join(fig_dir, plot_name + '.png'))
+    plt.close(fig)
