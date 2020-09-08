@@ -10,15 +10,40 @@ experiment = ex.Experiment(run_n).setup(model_analysis_dir=True)
 paths = sf.SamplePathDirFactory(sds.path_dict).extend_base_path(experiment.run_dir)
 
 BG_sample = 'qcdSideReco'
-#SIG_samples = ['GtoWW15naReco', 'GtoWW35naReco']
-SIG_samples = ['GtoWW25naReco', 'qcdSigReco']
-all_samples = [BG_sample] + SIG_samples
+BG_SR_Sample = 'qcdSigAllReco'
+SIG_samples = ['GtoWW15naReco', 'GtoWW25naReco', 'GtoWW35naReco', 'GtoWW45naReco']
+#SIG_samples = ['GtoWW25naReco', 'qcdSigAllReco']
+all_samples = [BG_sample, BG_SR_Sample] + SIG_samples
 
-strategy_ids = ['s1', 's2', 's3', 's4', 's5']
+strategy_ids_total_loss = ['s1', 's2', 's3', 's4', 's5']
+strategy_ids_kl_loss = ['kl1', 'kl2']
 
 # read in data
 data = sf.read_inputs_to_jet_sample_dict_from_dir(all_samples, paths)
 
-# plot roc plot for each signal
-for SIG_sample in SIG_samples:
+
+
+# *****************************************
+#					ROC
+# *****************************************
+
+# plot ROC for each signal
+for SIG_sample in SIG_samples + [BG_SR_Sample]:
 	ra.plot_ROC_loss_strategy(data[BG_sample], data[SIG_sample], strategy_ids, experiment.model_analysis_dir) 
+
+
+# plot binned ROC for each signal
+mass_centers = [1500,2500,3500,4500]
+for SIG_sample, mass_center in zip(SIG_samples, mass_centers):
+	ra.plot_binned_ROC_loss_strategy(data[BG_sample], data[SIG_sample], mass_center, strategy_ids, fig_dir=experiment.model_analysis_dir)
+
+# plot binned ROC for qcd signal region for all mass centers
+for mass_center in zip(SIG_samples, mass_centers):
+	ra.plot_binned_ROC_loss_strategy(data[BG_sample], data[BG_SR_Sample], mass_center, strategy_ids, fig_dir=experiment.model_analysis_dir)
+
+
+
+# *****************************************
+#			LOSS DISTRIBUTION
+# *****************************************
+
