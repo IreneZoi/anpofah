@@ -10,7 +10,8 @@ experiment = ex.Experiment(run_n).setup(model_analysis_dir=True)
 paths = sf.SamplePathDirFactory(sds.path_dict).extend_base_path(experiment.run_dir)
 
 BG_sample = 'qcdSideReco'
-SIG_samples = ['GtoWW15naReco', 'GtoWW35naReco']
+#SIG_samples = ['GtoWW15naReco', 'GtoWW35naReco']
+SIG_samples = ['GtoWW25naReco', 'qcdSigReco']
 all_samples = [BG_sample] + SIG_samples
 
 strategy_ids = ['s1', 's2', 's3', 's4', 's5']

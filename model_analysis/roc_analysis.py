@@ -45,10 +45,10 @@ def plot_roc(neg_class_losses, pos_class_losses, legend=[], title='ROC', legend_
     return aucs
 
 
-def plot_ROC_loss_strategy(bg_sample, sig_sample, strategy_ids, fig_dir):
+def plot_ROC_loss_strategy(bg_sample, sig_sample, strategy_ids, fig_dir, log_x=True):
 
     legend = [ls.loss_strategy_dict[s_id].title_str for s_id in strategy_ids]
     # compute combined loss for each loss strategy
     neg_class_losses = [ls.loss_strategy_dict[s_id](bg_sample) for s_id in strategy_ids]
     pos_class_losses = [ls.loss_strategy_dict[s_id](sig_sample) for s_id in strategy_ids]
-    plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='ROC '+sig_sample.name, plot_name='ROC_'+sig_sample.name, fig_dir=fig_dir)
+    plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='ROC '+sig_sample.name, plot_name='ROC_'+sig_sample.name, fig_dir=fig_dir, log_x=log_x)
