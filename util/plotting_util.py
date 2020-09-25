@@ -12,10 +12,10 @@ def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', 
         plt.legend(loc=legend_loc)
     plt.tight_layout()
     if fig_dir is not None:
-        fig.savefig(os.path.join(fig_dir, plot_name + '.png'))
+        fig.savefig(os.path.join(fig_dir, plot_name + '.pdf'))
     else:
         plt.show();
-    plt.close()
+    plt.close(fig)
 
 
 def plot_hist_on_axis(ax, data, bins, xlabel, ylabel, title, legend=[], ylogscale=True, normed=True, ylim=None, xlim=None):
@@ -46,7 +46,7 @@ def plot_hist_2d( x, y, xlabel='x', ylabel='num frac', title='histogram', plot_n
     if fig_dir:
         plt.savefig(os.path.join(fig_dir,plot_name+'.png'))
     plt.show()
-    #plt.close()
+    plt.close(fig)
     return ax
     
     
@@ -58,7 +58,7 @@ def plot_hist_2d_on_axis( ax, x, y, xlabel, ylabel, title ):
     return im
 
 
-def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, legend_loc='best'):
+def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, legend_loc='best', clip_outlier=False):
     '''
     plots feature distribution treating first data-array as backround and rest of arrays as signal
     :param data: list/array of N elements where first element is assumed to be background and elements 2..N-1 assumed to be signal. all elements = array of length M
@@ -73,6 +73,9 @@ def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogr
         if i > 0:
             histtype = 'step'
             alpha = 1.0
+        if clip_outlier:
+            idx = dpr.is_outlier_percentile(dat)
+            dat = dat[~idx]
         plt.hist(dat, bins=bins, normed=normed, alpha=alpha, histtype=histtype, label=legend[i])
 
     plt.ylabel(ylabel)
@@ -82,5 +85,5 @@ def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogr
     plt.tight_layout()
     plt.draw()
     if fig_dir:
-        fig.savefig(os.path.join(fig_dir, plot_name + '.png'))
+        fig.savefig(os.path.join(fig_dir, plot_name + '.pdf'))
     plt.close(fig)

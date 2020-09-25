@@ -31,6 +31,12 @@ def get_mjj_binned_sample(sample, mjj_peak, window_pct=20):
     return [left_bin_ds, center_bin_ds, right_bin_ds]
 
 
+def get_mjj_binned_sample_center_bin(sample, mjj_peak, window_pct=20):
+    left_edge, right_edge = mjj_peak * (1. - window_pct / 100.), mjj_peak * (1. + window_pct / 100.)
+    center_bin = sample[[(sample['mJJ'] >= left_edge) & (sample['mJJ'] <= right_edge)]]
+    return js.JetSample(sample.name, center_bin, title=sample.name + ' ' + str(left_edge / 1000) + ' <= mJJ <= ' + str(right_edge / 1000))
+
+
 def plot_roc(neg_class_losses, pos_class_losses, legend=[], title='ROC', legend_loc='best', plot_name='ROC', fig_dir=None, xlim=None, log_x=True):
 
     class_labels, losses = get_label_and_score_arrays(neg_class_losses, pos_class_losses) # stack losses and create according labels
@@ -55,7 +61,7 @@ def plot_roc(neg_class_losses, pos_class_losses, legend=[], title='ROC', legend_
     plt.title(title)
     if fig_dir:
     	print('writing ROC plot to {}'.format(fig_dir))
-    	fig.savefig(os.path.join(fig_dir, plot_name + '.png'), bbox_inches='tight')
+    	fig.savefig(os.path.join(fig_dir, plot_name + '.pdf'), bbox_inches='tight')
     plt.close(fig)
     return aucs
 
@@ -75,3 +81,16 @@ def plot_binned_ROC_loss_strategy(bg_sample, sig_sample, mass_center, strategy_i
 	_, sig_center_bin_sample, _ = get_mjj_binned_sample(sig_sample, mass_center)
 
 	plot_ROC_loss_strategy(bg_sample=bg_center_bin_sample, sig_sample=sig_center_bin_sample, strategy_ids=strategy_ids, fig_dir=fig_dir, plot_name_suffix=plot_name_suffix+'_mJJ_'+str(mass_center)+'_center_bin', log_x=log_x)
+
+
+def plot_binned_ROC(bg_samples, sig_samples, strategy, mass_center, fig_dir, plot_name_suffix, legend=['run1', 'run2'], log_x=True):
+
+	binned_bgs = [get_mjj_binned_sample_center_bin(s, mass_center) for s in bg_samples]
+	binned_sigs = [get_mjj_binned_sample_center_bin(s, mass_center) for s in sig_samples]
+
+	neg_class_losses = [strategy(b) for b in binned_bgs]
+	pos_class_losses = [strategy(s) for s in binned_sigs]
+
+	plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='model comparison ROC binned strategy ' + strategy.title_str + ' ' + binned_sigs[0].name, log_x=True, plot_name='ROC_binned_logTPR_' + strategy.file_str + '_' + binned_sigs[0].name, fig_dir=fig_dir)
+
+
