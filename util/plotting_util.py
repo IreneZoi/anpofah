@@ -24,14 +24,17 @@ def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', 
     plt.close(fig)
 
 
-def plot_multihist(data, bins=100, titles=[], plot_name='histogram', fig_dir=None):
-    ''' plot len(data) histograms on same figure '''
+def plot_multihist(data, bins=100, suptitle='histograms', titles=[], plot_name='histograms', fig_dir=None):
+    ''' plot len(data) histograms on same figure 
+        data = list of features to plot (each element is flattened before plotting)
+    '''
     rows_n, cols_n = subplots_rows_cols(len(data))
     fig, axs = plt.subplots(nrows=rows_n,ncols=cols_n, figsize=(9,9))
     for ax, dat, title in zip(axs.flat, data, titles):
-        plot_hist_on_axis(ax, dat, bins=bins, title=title)
+        plot_hist_on_axis(ax, dat.flatten(), bins=bins, title=title)
     [a.axis('off') for a in axs.flat[len(data):]] # turn off unused subplots
-    plt.tight_layout()
+    plt.suptitle(suptitle)
+    plt.tight_layout(rect=(0, 0, 1, 0.95))
     if fig_dir is not None:
         fig.savefig(os.path.join(fig_dir, plot_name + '.pdf'))
     else:
