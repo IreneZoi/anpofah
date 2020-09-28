@@ -1,8 +1,14 @@
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import os
+import numpy as np
 
 import anpofah.util.data_preprocessing as dpr
+
+
+def subplots_rows_cols(n):
+    ''' get number of subplot rows and columns needed to plot n histograms in one figure '''
+    return int(np.round(np.sqrt(n))), int(np.ceil(np.sqrt(n)))
 
 
 def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None):
@@ -18,7 +24,22 @@ def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', 
     plt.close(fig)
 
 
-def plot_hist_on_axis(ax, data, bins, xlabel, ylabel, title, legend=[], ylogscale=True, normed=True, ylim=None, xlim=None):
+def plot_multihist(data, bins=100, titles=[], plot_name='histogram', fig_dir=None):
+    ''' plot len(data) histograms on same figure '''
+    rows_n, cols_n = subplots_rows_cols(len(data))
+    fig, axs = plt.subplots(nrows=rows_n,ncols=cols_n, figsize=(9,9))
+    for ax, dat, title in zip(axs.flat, data, titles):
+        plot_hist_on_axis(ax, dat, bins=bins, title=title)
+    [a.axis('off') for a in axs.flat[len(data):]] # turn off unused subplots
+    plt.tight_layout()
+    if fig_dir is not None:
+        fig.savefig(os.path.join(fig_dir, plot_name + '.pdf'))
+    else:
+        plt.show();
+    plt.close(fig)
+
+
+def plot_hist_on_axis(ax, data, bins, xlabel='', ylabel='', title='histogram', legend=[], ylogscale=True, normed=True, ylim=None, xlim=None):
     if ylogscale:
         ax.set_yscale('log', nonposy='clip')
     counts, edges, _ = ax.hist(data, bins=bins, normed=normed, histtype='step', label=legend)
