@@ -24,3 +24,7 @@ if feature_analysis:
 if constituents_analysis:
 	sample = data['qcdSig']
 	saan.analyze_constituents(sample)
+	sample.convert_to_cartesian()
+	saan.analyze_constituents(sample, plot_name_suffix='_cartesian')
+
+
