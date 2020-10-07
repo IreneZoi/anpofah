@@ -24,7 +24,7 @@ def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', 
     plt.close(fig)
 
 
-def plot_multihist(data, bins=100, suptitle='histograms', titles=[], plot_name='histograms', fig_dir=None):
+def plot_multihist(data, bins=100, suptitle='histograms', titles=[], plot_name='histograms', fig_dir=None, fig_format='.pdf'):
     ''' plot len(data) histograms on same figure 
         data = list of features to plot (each element is flattened before plotting)
     '''
@@ -36,7 +36,7 @@ def plot_multihist(data, bins=100, suptitle='histograms', titles=[], plot_name='
     plt.suptitle(suptitle)
     plt.tight_layout(rect=(0, 0, 1, 0.95))
     if fig_dir is not None:
-        fig.savefig(os.path.join(fig_dir, plot_name + '.pdf'))
+        fig.savefig(os.path.join(fig_dir, plot_name + fig_format))
     else:
         plt.show();
     plt.close(fig)
