@@ -82,7 +82,7 @@ def plot_hist_2d_on_axis( ax, x, y, xlabel, ylabel, title ):
     return im
 
 
-def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, legend_loc='best', clip_outlier=False):
+def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, legend_loc='best', clip_outlier=False, xlim=None, fig_format='.pdf'):
     '''
     plots feature distribution treating first data-array as backround and rest of arrays as signal
     :param data: list/array of N elements where first element is assumed to be background and elements 2..N-1 assumed to be signal. all elements = array of length M
@@ -102,6 +102,8 @@ def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogr
             dat = dat[~idx]
         plt.hist(dat, bins=bins, normed=normed, alpha=alpha, histtype=histtype, label=legend[i])
 
+    if xlim:
+        plt.xlim(xlim)
     plt.ylabel(ylabel)
     plt.xlabel(xlabel)
     plt.title(title)
@@ -109,5 +111,5 @@ def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogr
     plt.tight_layout()
     plt.draw()
     if fig_dir:
-        fig.savefig(os.path.join(fig_dir, plot_name + '.pdf'))
+        fig.savefig(os.path.join(fig_dir, plot_name + fig_format))
     plt.close(fig)
