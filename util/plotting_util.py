@@ -11,9 +11,11 @@ def subplots_rows_cols(n):
     return int(np.round(np.sqrt(n))), int(np.ceil(np.sqrt(n)))
 
 
-def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None):
+def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None, clip_outlier=False):
     fig = plt.figure(figsize=(6, 4))
-    plot_hist_on_axis(plt.gca(), data, bins=bins, xlabel=xlabel, ylabel=ylabel, title=title, legend=legend, ylogscale=ylogscale, normed=normed, ylim=ylim, xlim=xlim)
+    if clip_outlier:
+        data = [dpr.clip_outlier(dat) for dat in data]
+    counts, edges = plot_hist_on_axis(plt.gca(), data, bins=bins, xlabel=xlabel, ylabel=ylabel, title=title, legend=legend, ylogscale=ylogscale, normed=normed, ylim=ylim, xlim=xlim)
     if legend:
         plt.legend(loc=legend_loc)
     plt.tight_layout()
@@ -22,15 +24,18 @@ def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', 
     else:
         plt.show();
     plt.close(fig)
+    return counts, edges
 
 
-def plot_multihist(data, bins=100, suptitle='histograms', titles=[], plot_name='histograms', fig_dir=None, fig_format='.pdf'):
+def plot_multihist(data, bins=100, suptitle='histograms', titles=[], clip_outlier=False, plot_name='histograms', fig_dir=None, fig_format='.pdf'):
     ''' plot len(data) histograms on same figure 
         data = list of features to plot (each element is flattened before plotting)
     '''
     rows_n, cols_n = subplots_rows_cols(len(data))
     fig, axs = plt.subplots(nrows=rows_n,ncols=cols_n, figsize=(9,9))
     for ax, dat, title in zip(axs.flat, data, titles):
+        if clip_outlier:
+            dat = dpr.clip_outlier(dat.flatten())
         plot_hist_on_axis(ax, dat.flatten(), bins=bins, title=title)
     [a.axis('off') for a in axs.flat[len(data):]] # turn off unused subplots
     plt.suptitle(suptitle)
@@ -53,6 +58,7 @@ def plot_hist_on_axis(ax, data, bins, xlabel='', ylabel='', title='histogram', l
         ax.set_ylim(ylim)
     if xlim:
         ax.set_xlim(xlim)
+    return counts, edges
 
 
 def plot_hist_2d( x, y, xlabel='x', ylabel='num frac', title='histogram', plot_name='hist2d', fig_dir=None, legend=[],ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None, clip_outlier=False):

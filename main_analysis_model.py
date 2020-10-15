@@ -7,8 +7,8 @@ import dadrah.selection.loss_strategy as lost
 
 
 # setup analysis inputs
-do_analyses = ['loss_combi']
-run_n = 502
+do_analyses = ['roc', 'loss_combi']
+run_n = 701
 fig_format = '.png'
 experiment = ex.Experiment(run_n).setup(model_analysis_dir=True)
 paths = sf.SamplePathDirFactory(sdfr.path_dict).update_base_path({'$run$': experiment.run_dir})

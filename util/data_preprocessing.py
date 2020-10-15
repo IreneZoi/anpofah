@@ -35,7 +35,11 @@ def is_outlier(points, thresh=4.5):
     return modified_z_score > thresh
 
 
-def is_outlier_percentile(points, percentile=99.99):
+def is_outlier_percentile(points, percentile=99.999):
     diff = (100 - percentile) / 2.0
     minval, maxval = np.percentile(points, [diff, 100 - diff])
     return (points < minval) | (points > maxval)
+
+def clip_outlier(data):
+    idx = is_outlier_percentile(data)
+    return data[~idx]
