@@ -1,4 +1,4 @@
-import pofah.path_constants.sample_dict_file_parts_input as sadi
+import pofah.path_constants.sample_dict_file_parts_input_dshep as sadi
 import pofah.util.sample_factory as sf
 import numpy as np
 
