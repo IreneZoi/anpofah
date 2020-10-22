@@ -8,7 +8,7 @@ feature_analysis = True
 constituents_analysis = False
 
 # samples and their paths
-sample_ids = ['qcdSide', 'qcdSideBis']
+sample_ids = ['qcdSide', 'qcdSideBis', 'qcdSig', 'qcdSigBis']
 
 # read 
 paths = sf.SamplePathDirFactory(sdfi.path_dict)
@@ -16,9 +16,9 @@ data = sf.read_inputs_to_jet_sample_dict_from_dir(sample_ids, paths, apply_mjj_c
 
 if feature_analysis:
 
-	saan.analyze_feature(data, 'mJJ', plot_name='mJJ', fig_dir='fig/dshep_data')
-	saan.analyze_feature(data, 'DeltaEtaJJ', plot_name='DeltaEtaJJ', fig_dir='fig/dshep_data')
-	saan.analyze_feature(data, 'DeltaPhiJJ', plot_name='DeltaPhiJJ', fig_dir='fig/dshep_data')
+	saan.analyze_feature(data, 'mJJ', plot_name='mJJ_qcd_SB_vs_SR', fig_dir='fig/dshep_data', first_is_bg=False)
+	saan.analyze_feature(data, 'DeltaEtaJJ', plot_name='DeltaEtaJJ_qcd_SB_vs_SR', fig_dir='fig/dshep_data', first_is_bg=False)
+	saan.analyze_feature(data, 'DeltaPhiJJ', plot_name='DeltaPhiJJ_qcd_SB_vs_SR', fig_dir='fig/dshep_data', first_is_bg=False)
 
 if constituents_analysis:
 	for sample_id in sample_ids:
