@@ -36,7 +36,7 @@ discriminator10 = disc.QRDiscriminator(quantile=0.1, loss_strategy=params.strate
 discriminator10.load(os.path.join(model_base_dir, 'dnn_run_101_QRmodel_train_sz30pc_qnt10_20200912.h5'))
 discriminator10.set_mean_var_input_output(qcd_sig_sample['mJJ'], discriminator10.loss_strategy(qcd_sig_sample))
 
-discriminator90 = disc.QRDiscriminator(quantile=0.1, loss_strategy=params.strategy)
+discriminator90 = disc.QRDiscriminator(quantile=0.9, loss_strategy=params.strategy)
 discriminator90.load(os.path.join(model_base_dir, 'dnn_run_101_QRmodel_train_sz30pc_qnt90_20200912.h5'))
 discriminator90.set_mean_var_input_output(qcd_sig_sample['mJJ'], discriminator90.loss_strategy(qcd_sig_sample))
 

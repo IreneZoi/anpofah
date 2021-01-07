@@ -7,11 +7,12 @@ import dadrah.selection.loss_strategy as lost
 
 
 # setup analysis inputs
-do_analyses = ['roc', 'loss_combi']
-run_n = 701
+do_analyses = ['roc', 'loss', 'loss_combi']
+run_n = 106
 fig_format = '.png'
 experiment = ex.Experiment(run_n).setup(model_analysis_dir=True)
 paths = sf.SamplePathDirFactory(sdfr.path_dict).update_base_path({'$run$': experiment.run_dir})
+print('Running analysis on experiment {}, plotting results to {}'.format(run_n, experiment.model_analysis_dir))
 
 BG_sample = 'qcdSideAllReco'
 BG_SR_sample = 'qcdSigAllReco'
