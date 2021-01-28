@@ -11,7 +11,7 @@ def subplots_rows_cols(n):
     return int(np.round(np.sqrt(n))), int(np.ceil(np.sqrt(n)))
 
 
-def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None, clip_outlier=False, fig_format='.pdf'):
+def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None, clip_outlier=False, fig_format='.png'):
     fig = plt.figure(figsize=(6, 4))
     if clip_outlier:
         data = [dpr.clip_outlier(dat) for dat in data]

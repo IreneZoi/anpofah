@@ -11,8 +11,7 @@ def analyze_feature(sample_dict, feature_name, sample_names=None, title_suffix='
 	''' for each sample in sample_dict: analyze feature of dijet 
 		if map_fun is given, process map_fun(feature) before analysis
 	'''
-	if not sample_names: 
-		sample_names = sample_dict.keys()
+	sample_names = sample_names or sample_dict.keys()
 	legend = [sample_dict[s].name for s in sample_names]
 	if map_fun:
 		feature = [map_fun(sample_dict[s]) for s in sample_names]
