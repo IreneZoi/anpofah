@@ -41,9 +41,9 @@ if 'roc' in do_analyses:
 		# for each type of loss strategy
 		for loss_ids, loss_name in zip([strategy_ids_reco_kl_loss, strategy_ids_total_loss, strategy_ids_kl_loss], ['reco_kl_loss', 'total_loss', 'KL_loss']):
 			# plot full ROC
-			ra.plot_ROC_loss_strategy(data[BG_sample], data[SIG_sample], loss_ids, plot_name_suffix=plot_name_suffix+'_' + loss_name, fig_dir=experiment.model_analysis_dir_roc) 
+			ra.plot_ROC_loss_strategy(data[BG_sample], data[SIG_sample], loss_ids, plot_name_suffix=plot_name_suffix+'_'+loss_name, fig_dir=experiment.model_analysis_dir_roc) 
 			# plot binned ROC
-			ra.plot_binned_ROC_loss_strategy(data[BG_sample], data[SIG_sample], mass_center, loss_ids, plot_name_suffix=plot_name_suffix'_' + loss_name, fig_dir=experiment.model_analysis_dir_roc)
+			ra.plot_binned_ROC_loss_strategy(data[BG_sample], data[SIG_sample], mass_center, loss_ids, plot_name_suffix=plot_name_suffix+'_'+loss_name, fig_dir=experiment.model_analysis_dir_roc)
 
 
 if 'roc_qcd_sb_vs_sr' in do_analyses:

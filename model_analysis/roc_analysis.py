@@ -37,7 +37,7 @@ def get_mjj_binned_sample_center_bin(sample, mjj_peak, window_pct=20):
     return js.JetSample(sample.name, center_bin, title=sample.name + ' ' + str(left_edge / 1000) + ' <= mJJ <= ' + str(right_edge / 1000))
 
 
-def plot_roc(neg_class_losses, pos_class_losses, legend=[], title='ROC', legend_loc='best', plot_name='ROC', fig_dir=None, xlim=None, log_x=True, fig_format='.pdf'):
+def plot_roc(neg_class_losses, pos_class_losses, legend=[], title='ROC', legend_loc='best', plot_name='ROC', fig_dir=None, xlim=None, log_x=True, fig_format='.png'):
 
     class_labels, losses = get_label_and_score_arrays(neg_class_losses, pos_class_losses) # stack losses and create according labels
 
@@ -66,7 +66,7 @@ def plot_roc(neg_class_losses, pos_class_losses, legend=[], title='ROC', legend_
     return aucs
 
 
-def plot_ROC_loss_strategy(bg_sample, sig_sample, strategy_ids, fig_dir, plot_name_suffix=None, log_x=True, fig_format='.pdf'):
+def plot_ROC_loss_strategy(bg_sample, sig_sample, strategy_ids, fig_dir, plot_name_suffix=None, log_x=True, fig_format='.png'):
 
     legend = [ls.loss_strategy_dict[s_id].title_str for s_id in strategy_ids]
     plot_name = '_'.join(filter(None, ['ROC', sig_sample.name, plot_name_suffix]))
@@ -76,7 +76,7 @@ def plot_ROC_loss_strategy(bg_sample, sig_sample, strategy_ids, fig_dir, plot_na
     plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='ROC ' + sig_sample.title, plot_name=plot_name, fig_dir=fig_dir, log_x=log_x, fig_format=fig_format)
 
 
-def plot_binned_ROC_loss_strategy(bg_sample, sig_sample, mass_center, strategy_ids, fig_dir, plot_name_suffix=None, log_x=True, fig_format='.pdf'):
+def plot_binned_ROC_loss_strategy(bg_sample, sig_sample, mass_center, strategy_ids, fig_dir, plot_name_suffix=None, log_x=True, fig_format='.png'):
 
 	_, bg_center_bin_sample, _ = get_mjj_binned_sample(bg_sample, mass_center)
 	_, sig_center_bin_sample, _ = get_mjj_binned_sample(sig_sample, mass_center)
