@@ -30,11 +30,11 @@ def count_before_mjj_cut(data):
 				ff.write('\n')
 
 
-def count_after_mjj_cut(data):
+def count_after_mjj_cut(data, file_path):
 
-	with open('./data/event_counts_after_mjj_cut.csv', 'a', newline='\n') as ff:
+	with open(file_path, 'a', newline='\n') as ff:
 
-		ff.write(','.join(['sample_name', 'n_cut_mjj_1100', 'n_cut_dEta_mjj>1.4', 'min_dEta', 'max_dEta', 'min_mJJ', 'max_mJJ']) + '\n\n')
+		ff.write(','.join(['sample_name', 'n_cut_mjj_1200', 'n_cut_dEta_mjj>1.4', 'min_dEta', 'max_dEta', 'min_mJJ', 'max_mJJ']) + '\n\n')
 
 		for sample_name, jet_events in data.items():
 
@@ -59,9 +59,11 @@ if __name__ == '__main__':
 
 	sample_ids = sdi.path_dict['sample_dir'].keys()
 	paths = sf.SamplePathDirFactory(sdi.path_dict)
-	data = sf.read_inputs_to_jet_sample_dict_from_dir(sample_ids, paths, apply_mjj_cut=False)
+	import ipdb; ipdb.set_trace()
+	data = sf.read_inputs_to_jet_sample_dict_from_dir(sample_ids, paths, mJJ=1200)
+	file_path = './data/event_counts_after_mjj_1200_cut.csv'
 
 	if full_mjj:
-		count_before_mjj_cut(data)
+		count_before_mjj_cut(data, file_path)
 	else:
-		count_after_mjj_cut(data)
+		count_after_mjj_cut(data, file_path)

@@ -7,7 +7,7 @@ import dadrah.selection.loss_strategy as lost
 import anpofah.util.sample_names as samp
 
 # setup analysis inputs
-do_analyses = ['roc', 'loss', 'loss_combi']
+do_analyses = ['roc_qcd_sb_vs_sr']
 # do_analyses = ['roc', 'loss', 'loss_combi', 'loss_qcd_sb_vs_sr', 'roc_qcd_sb_vs_sr']
 run_n = 111
 fig_format = '.png'
@@ -19,7 +19,7 @@ strategy_ids_kl_loss = ['kl1', 'kl2', 'kl3', 'kl4', 'kl5']
 
 # set background sample to use
 BG_sample = samp.BG_SR_sample
-SIG_samples = samp.SIG_samples_br
+SIG_samples = samp.SIG_samples_na
 mass_centers = [1500, 2500, 3500, 4500]
 plot_name_suffix = BG_sample + '_vs_' + ('narrow' if SIG_samples == samp.SIG_samples_na else 'broad') + '_sig'
 
@@ -53,7 +53,7 @@ if 'roc_qcd_sb_vs_sr' in do_analyses:
 		pass
 		# ra.plot_binned_ROC_loss_strategy(data[samp.BG_SB_sample], data[samp.BG_SR_sample], mass_center, strategy_ids_reco_kl_loss, plot_name_suffix=samp.BG_SB_sample + '_reco_kl_loss', fig_dir=experiment.model_analysis_dir_roc)
 		# ra.plot_binned_ROC_loss_strategy(data[samp.BG_SB_sample], data[samp.BG_SR_sample], mass_center, strategy_ids_total_loss, plot_name_suffix=samp.BG_SB_sample + '_total_loss', fig_dir=experiment.model_analysis_dir_roc)
-		#ra.plot_binned_ROC_loss_strategy(data[BG_SB_sample], data[BG_SR_sample], mass_center, strategy_ids_kl_loss, plot_name_suffix='KL_loss', fig_dir=experiment.model_analysis_dir_roc)
+		# ra.plot_binned_ROC_loss_strategy(data[samp.BG_SB_sample], data[samp.BG_SR_sample], mass_center, strategy_ids_kl_loss, plot_name_suffix='KL_loss', fig_dir=experiment.model_analysis_dir_roc)
 
 
 # *****************************************
