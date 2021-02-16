@@ -1,4 +1,5 @@
 import pofah.path_constants.sample_dict_file_parts_input as sdi
+import pofah.phase_space.cut_constants as cuts
 import pofah.util.sample_factory as sf
 import numpy as np
 
@@ -59,9 +60,8 @@ if __name__ == '__main__':
 
 	sample_ids = sdi.path_dict['sample_dir'].keys()
 	paths = sf.SamplePathDirFactory(sdi.path_dict)
-	import ipdb; ipdb.set_trace()
-	data = sf.read_inputs_to_jet_sample_dict_from_dir(sample_ids, paths, mJJ=1200)
-	file_path = './data/event_counts_after_mjj_1200_cut.csv'
+	data = sf.read_inputs_to_jet_sample_dict_from_dir(sample_ids, paths, **cuts.signalregion_cuts)
+	file_path = './data/event_counts_after_mjj_1200_jetEta_2.4_jetPt_200_cut.csv'
 
 	if full_mjj:
 		count_before_mjj_cut(data, file_path)

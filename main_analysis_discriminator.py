@@ -7,9 +7,9 @@ import dadrah.selection.loss_strategy as lost
 import anpofah.util.sample_names as samp
 
 # setup analysis inputs
-do_analyses = ['roc_qcd_sb_vs_sr']
-# do_analyses = ['roc', 'loss', 'loss_combi', 'loss_qcd_sb_vs_sr', 'roc_qcd_sb_vs_sr']
-run_n = 111
+do_analyses = ['roc', 'loss', 'roc_qcd_sb_vs_sr', 'loss_qcd_sb_vs_sr', 'loss_combi']
+# do_analyses = ['roc', 'loss']
+run_n = 113
 fig_format = '.png'
 
 # loss strategies
