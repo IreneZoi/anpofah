@@ -7,11 +7,12 @@ import anpofah.sample_analysis.sample_analysis as saan
 
 
 feature_analysis_all = False
-feature_analysis_qcd = True
+feature_analysis_qcd = False
+feature_analysis_sig = True
 constituents_analysis = False
-mjj_cut = True
 
 # samples and their paths
+sample_ids_grav_35 = ['GtoWW35na','GtoWW35br']
 sample_ids_grav = ['GtoWW15na','GtoWW15br','GtoWW25na','GtoWW25br','GtoWW35na','GtoWW35br','GtoWW45na','GtoWW45br',]
 #sample_ids_azzz = ['AtoHZ15', 'AtoHZ20', 'AtoHZ25', 'AtoHZ30', 'AtoHZ35', 'AtoHZ40', 'AtoHZ45']
 sample_ids_azzz = ['AtoHZ15', 'AtoHZ25', 'AtoHZ35', 'AtoHZ45']
@@ -19,9 +20,11 @@ sample_ids_qcd = ['qcdSide', 'qcdSideExt', 'qcdSig', 'qcdSigExt']
 sample_ids_qcd_sb_vs_sr = ['qcdSide', 'qcdSig']
 sample_ids_qcd_grav = sample_ids_qcd_sb_vs_sr + sample_ids_grav
 sample_ids_qcd_azzz = sample_ids_qcd_sb_vs_sr + sample_ids_azzz
+cuts = cuts.signalregion_cuts
 
 paths = sf.SamplePathDirFactory(sdfi.path_dict)
 fig_dir = 'fig/merged_data_for_VAE'
+print('plotting to '+ fig_dir)
 
 if feature_analysis_qcd:
 
@@ -29,15 +32,10 @@ if feature_analysis_qcd:
 	data_signalregion = sf.read_inputs_to_event_sample_dict_from_dir(['qcdSig'], paths, read_n=int(1e6), **cuts.signalregion_cuts)
 	data = {**data_side, **data_signalregion}
 	suffix = 'sb_vs_sr'
-	print('plotting to '+ fig_dir)
 
 	# 1D distributions
-	saan.analyze_feature(data, 'mJJ', plot_name='mJJ_new_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=False, legend_loc='best', fig_format='.png')
-	saan.analyze_feature(data, 'DeltaEtaJJ', plot_name='DeltaEtaJJ_new_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=False, legend_loc='best', fig_format='.png')
-	saan.analyze_feature(data, 'DeltaPhiJJ', plot_name='DeltaPhiJJ_new_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=False, legend_loc='best', fig_format='.png')
-	saan.analyze_feature(data, 'j1Pt', plot_name='j1Pt_new_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=False, legend_loc='best', fig_format='.png')
-	saan.analyze_feature(data, 'j2Pt', plot_name='j2Pt_new_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=False, legend_loc='best', fig_format='.png')
-	saan.analyze_feature(data, 'j1Eta', plot_name='j1Eta_new_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=False, legend_loc='best', fig_format='.png')
+	for feature in ['mJJ', 'DeltaEtaJJ', 'DeltaPhiJJ', 'j1Pt', 'j2Pt', 'j1Eta']:
+		saan.analyze_feature(data, feature, plot_name=feature+'_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=False, legend_loc='best', fig_format='.png')
 	map_fun = lambda ff : ff['DeltaEtaJJ'] + ff['j1Eta'] # compute j2Eta
 	saan.analyze_feature(data, 'j2Eta', map_fun=map_fun, plot_name='j2Eta_new_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=False, legend_loc='best', fig_format='.png')
 
@@ -53,9 +51,13 @@ if feature_analysis_all:
 		# read 
 		data = sf.read_inputs_to_event_sample_dict_from_dir(sample_ids, paths, read_n=int(1e6), mJJ=1200.)
 
-		saan.analyze_feature(data, 'mJJ', plot_name='mJJ_new_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=True, legend_loc='best', fig_format='.png')
-		saan.analyze_feature(data, 'DeltaEtaJJ', plot_name='DeltaEtaJJ_new_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=True, legend_loc='best', fig_format='.png')
-		saan.analyze_feature(data, 'DeltaPhiJJ', plot_name='DeltaPhiJJ_new_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=True, legend_loc='best', fig_format='.png')
+		for feature in ['mJJ', 'DeltaEtaJJ', 'DeltaPhiJJ']:
+			saan.analyze_feature(data, feature, plot_name=feature+'_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=True, legend_loc='best', fig_format='.png')
+
+if feature_analysis_sig:
+
+	data = sf.read_inputs_to_event_sample_dict_from_dir(sample_ids_grav_35, paths, read_n=int(1e6), **cuts)
+	saan.analyze_feature(data, 'mJJ', plot_name='mJJ_grav_35_all_cuts', fig_dir=fig_dir, first_is_bg=False, legend_loc='best', fig_format='.png')
 
 
 if constituents_analysis:

@@ -58,11 +58,11 @@ def plot_mass_center_ROC(bg_sample, sig_sample_na, sig_sample_br, mass_center, p
     _, sig_center_bin_sample_na, _ = ra.get_mjj_binned_sample(sig_sample_na, mass_center)
     _, sig_center_bin_sample_br, _ = ra.get_mjj_binned_sample(sig_sample_br, mass_center)
 
-    strategy_ids = ['r5', 'kl5', 's5']
+    strategy_ids = ['r5', 'kl5', 'rk5']
     title_strategy_suffix = 'loss J1 && loss J2 > LT'
-    legend = [s_id + ' ' + sig_type for sig_type in ('na', 'br') for s_id in ('Reco', 'KL', 'Total')]
+    legend = [s_id + ' ' + sig_type for sig_type in ('na', 'br') for s_id in ('Reco', r'$D_{KL}$', r'Reco + 10*$D_{KL}$')]
     plot_name = '_'.join(filter(None, ['ROC', sig_sample_na.name.replace('Reco', 'br'), plot_name_suffix]))
-    title = 'ROC ' + sdfr.path_dict['sample_names'][sig_sample_na.name].replace('narrow reco',':') + title_strategy_suffix
+    title = r'$G_{{RS}} \to WW \, m_{{G}} = {} TeV$'.format(mass_center/1000)
     log_x = False
     x_lim = None
 
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     print('Running analysis on experiment {}, plotting results to {}'.format(run_n, experiment.model_analysis_dir))
     
     # read in data
-    data = sf.read_inputs_to_jet_sample_dict_from_dir(samp.all_samples, paths, read_n=int(1e5))
+    data = sf.read_inputs_to_jet_sample_dict_from_dir(samp.all_samples, paths, read_n=None)
 
     # *****************************************
     #                   ROC
