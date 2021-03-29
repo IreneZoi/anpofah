@@ -20,7 +20,7 @@ def analyze_feature(sample_dict, feature_name, sample_names=None, title_suffix='
 	if first_is_bg:
 		pu.plot_bg_vs_sig(feature, legend=legend, xlabel=feature_name, title=' '.join([r'distribution ', feature_name, title_suffix]), legend_loc=legend_loc, plot_name=plot_name, fig_dir=fig_dir, clip_outlier=clip_outlier, ylogscale=ylogscale, xlim=xlim, fig_format=fig_format)
 	else:
-		return pu.plot_hist(feature, legend=legend, xlabel=feature_name, title=' '.join([r'distribution ', feature_name, title_suffix]), legend_loc=legend_loc, plot_name=plot_name, fig_dir=fig_dir, ylogscale=ylogscale, normed=normed, clip_outlier=clip_outlier, fig_format=fig_format)
+		return pu.plot_hist(feature, legend=legend, xlabel=feature_name, title=' '.join([r'distribution ', feature_name, title_suffix]), legend_loc=legend_loc, plot_name=plot_name, fig_dir=fig_dir, ylogscale=ylogscale, normed=normed, clip_outlier=clip_outlier, xlim=xlim, fig_format=fig_format)
 
 
 def analyze_feature_2D(sample_dict, feature_name_1, feature_name_2, sample_names=None, title_suffix='', plot_name='hist2D', fig_dir=None, clip_outlier=False, map_fun_1=None, map_fun_2=None, fig_format='.png'):

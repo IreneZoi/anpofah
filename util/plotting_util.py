@@ -61,7 +61,7 @@ def plot_hist_on_axis(ax, data, bins, xlabel='', ylabel='', title='histogram', l
     return counts, edges
 
 
-def plot_hist_2d( x, y, xlabel='x', ylabel='num frac', title='histogram', plot_name='hist2d', fig_dir=None, legend=[],ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None, clip_outlier=False):
+def plot_hist_2d(x, y, xlabel='x', ylabel='num frac', title='histogram', plot_name='hist2d', fig_dir=None, legend=[], ylogscale=True, normed=True, ylim=None, legend_loc='best', xlim=None, clip_outlier=False):
     
     if clip_outlier:
         idx = dpr.is_outlier_percentile(x) | dpr.is_outlier_percentile(y)
@@ -80,7 +80,7 @@ def plot_hist_2d( x, y, xlabel='x', ylabel='num frac', title='histogram', plot_n
     return ax
     
     
-def plot_hist_2d_on_axis( ax, x, y, xlabel, ylabel, title ):
+def plot_hist_2d_on_axis(ax, x, y, xlabel, ylabel, title):
     im = ax.hist2d(x, y, bins=100, norm=colors.LogNorm())
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
