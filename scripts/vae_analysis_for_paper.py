@@ -7,6 +7,7 @@ import dadrah.selection.loss_strategy as lost
 import anpofah.util.sample_names as samp
 
 import matplotlib.pyplot as plt
+import mplhep as hep
 import numpy as np
 import sklearn.metrics as skl
 import os
@@ -90,6 +91,9 @@ if __name__ == '__main__':
     
     # read in data
     data = sf.read_inputs_to_jet_sample_dict_from_dir(samp.all_samples, paths, read_n=None)
+
+    # Load CMS style sheet
+    plt.style.use(hep.style.CMS)
 
     # *****************************************
     #                   ROC
