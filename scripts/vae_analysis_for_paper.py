@@ -39,6 +39,8 @@ def plot_roc(neg_class_losses, pos_class_losses_na, pos_class_losses_br, legend,
     lines = plt.gca().get_lines()
     legend1 = plt.legend([lines[i] for i in [0,len(neg_class_losses)]], ['Narrow', 'Broad'], loc='best', frameon=False, title=title)
     legend2 = plt.legend([lines[i] for i in [0,1,2]], legend, loc='center right', frameon=False)
+    for leg in legend1.legendHandles:
+        leg.legobj.set_linewidth(2.0)
     for leg in legend2.legendHandles: 
         leg.set_color('black')
     plt.gca().add_artist(legend1)
@@ -68,9 +70,9 @@ def plot_mass_center_ROC(bg_sample, sig_sample_na, sig_sample_br, mass_center, p
     _, sig_center_bin_sample_na, _ = ra.get_mjj_binned_sample(sig_sample_na, mass_center)
     _, sig_center_bin_sample_br, _ = ra.get_mjj_binned_sample(sig_sample_br, mass_center)
 
-    strategy_ids = ['r5', 'kl5', 'rk5']
+    strategy_ids = ['r5', 'kl5']
     title_strategy_suffix = 'loss J1 && loss J2 > LT'
-    legend = ['Reco AD score', r'$D_{KL}$ AD score', 'Combined AD score']
+    legend = ['Reco AD score', r'$D_{KL}$ AD score',]
     plot_name = '_'.join(filter(None, ['ROC', sig_sample_na.name.replace('Reco', 'br'), plot_name_suffix]))
     title = r'$G_{{RS}} \to WW \, m_{{G}} = {} TeV$'.format(mass_center/1000)
     log_x = False
