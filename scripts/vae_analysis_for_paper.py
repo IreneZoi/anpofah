@@ -19,28 +19,37 @@ def plot_roc(neg_class_losses, pos_class_losses_na, pos_class_losses_br, legend,
     class_labels_br, losses_br = ra.get_label_and_score_arrays(neg_class_losses, pos_class_losses_br) # stack losses and create according labels per strategy
     class_labels, losses = class_labels_na + class_labels_br, losses_na + losses_br
 
-    colors = ['blue']*len(neg_class_losses) + ['darkorange']*len(neg_class_losses)
+    palette = ['#3E96A1', '#EC4E20', '#FF9505', '#713E5A']
+    colors = [palette[0]]*len(neg_class_losses) + [palette[1]]*len(neg_class_losses)
     styles = ['dashed', 'dashdot', 'dotted']*2
 
     aucs = []
-    fig = plt.figure(figsize=(5, 5))
+    fig = plt.figure() # figsize=(5, 5)
 
-    for y_true, loss, label, color, style in zip(class_labels, losses, legend, colors, styles):
+    for y_true, loss, color, style in zip(class_labels, losses, colors, styles):
         fpr, tpr, threshold = skl.roc_curve(y_true, loss)
         aucs.append(skl.roc_auc_score(y_true, loss))
         if log_x:
-            plt.loglog(tpr, 1./fpr, label=label + " (auc " + "{0:.3f}".format(aucs[-1]) + ")", linestyle=style, color=color)
+            plt.loglog(tpr, 1./fpr, linestyle=style, color=color) # label=label + " (auc " + "{0:.3f}".format(aucs[-1]) + ")",
         else:
-            plt.semilogy(tpr, 1./fpr, label=label + " (auc " + "{0:.3f}".format(aucs[-1]) + ")", linestyle=style, color=color)
+            plt.semilogy(tpr, 1./fpr, linestyle=style, color=color)
             plt.semilogy(np.linspace(0, 1, num=100), 1./np.linspace(0, 1, num=100), linewidth=1., linestyle='solid', color='silver')
+    
+    # add 2 legends (vae score types and resonance types)
+    lines = plt.gca().get_lines()
+    legend1 = plt.legend([lines[i] for i in [0,len(neg_class_losses)]], ['Narrow', 'Broad'], loc='best', frameon=False, title=title)
+    legend2 = plt.legend([lines[i] for i in [0,1,2]], legend, loc='center right', frameon=False)
+    for leg in legend2.legendHandles: 
+        leg.set_color('black')
+    plt.gca().add_artist(legend1)
+    plt.gca().add_artist(legend2)
+
     plt.grid()
     if x_lim:
         plt.xlim(left=x_lim)
     plt.xlabel('True positive rate')
     plt.ylabel('1 / False positive rate')
-    plt.legend(loc=legend_loc)
     plt.tight_layout()
-    plt.title(title)
     if fig_dir:
         print('writing ROC plot to {}'.format(fig_dir))
         fig.savefig(os.path.join(fig_dir, plot_name + fig_format), bbox_inches='tight')
@@ -61,7 +70,7 @@ def plot_mass_center_ROC(bg_sample, sig_sample_na, sig_sample_br, mass_center, p
 
     strategy_ids = ['r5', 'kl5', 'rk5']
     title_strategy_suffix = 'loss J1 && loss J2 > LT'
-    legend = [s_id + ' ' + sig_type for sig_type in ('na', 'br') for s_id in ('Reco', r'$D_{KL}$', r'Reco + 10*$D_{KL}$')]
+    legend = ['Reco AD score', r'$D_{KL}$ AD score', 'Combined AD score']
     plot_name = '_'.join(filter(None, ['ROC', sig_sample_na.name.replace('Reco', 'br'), plot_name_suffix]))
     title = r'$G_{{RS}} \to WW \, m_{{G}} = {} TeV$'.format(mass_center/1000)
     log_x = False
@@ -90,7 +99,7 @@ if __name__ == '__main__':
     print('Running analysis on experiment {}, plotting results to {}'.format(run_n, experiment.model_analysis_dir))
     
     # read in data
-    data = sf.read_inputs_to_jet_sample_dict_from_dir(samp.all_samples, paths, read_n=None)
+    data = sf.read_inputs_to_jet_sample_dict_from_dir(samp.all_samples, paths, read_n=int(3e4))
 
     # Load CMS style sheet
     plt.style.use(hep.style.CMS)
