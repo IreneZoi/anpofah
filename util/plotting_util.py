@@ -88,11 +88,12 @@ def plot_hist_2d_on_axis(ax, x, y, xlabel, ylabel, title):
     return im
 
 
-def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=[], ylogscale=True, normed=True, legend_loc='best', clip_outlier=False, xlim=None, fig_format='.pdf'):
+def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', plot_name='plot', fig_dir=None, legend=['bg','sig'], ylogscale=True, normed=True, legend_loc='best', clip_outlier=False, xlim=None, fig_format='.pdf'):
     '''
     plots feature distribution treating first data-array as backround and rest of arrays as signal
     :param data: list/array of N elements where first element is assumed to be background and elements 2..N-1 assumed to be signal. all elements = array of length M
     '''
+
     fig = plt.figure(figsize=(6, 4))
     alpha = 0.4
     histtype = 'stepfilled'
@@ -106,7 +107,7 @@ def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogr
         if clip_outlier:
             idx = dpr.is_outlier_percentile(dat)
             dat = dat[~idx]
-        plt.hist(dat, bins=bins, normed=normed, alpha=alpha, histtype=histtype, label=legend[i])
+        plt.hist(dat, bins=bins, density=normed, alpha=alpha, histtype=histtype, label=legend[i])
 
     if xlim:
         plt.xlim(xlim)
@@ -118,4 +119,32 @@ def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogr
     plt.draw()
     if fig_dir:
         fig.savefig(os.path.join(fig_dir, plot_name + fig_format))
+    plt.close(fig)
+
+
+def plot_bg_vs_sig_multihist(data_bg, data_sig, subtitles, bins=100, suptitle='histograms', clip_outlier=False, normed=True, ylogscale=True, plot_name='multihist', fig_dir='fig', fig_format='.png'):
+    '''
+    plot background versus signal for multiple features as 1D histograms in one figure
+    param data_bg: list of K features with each N background values
+    param data_sig: list of K features with each N signal values
+    '''
+    rows_n, cols_n = subplots_rows_cols(len(data_bg))
+    fig, axs = plt.subplots(nrows=rows_n, ncols=cols_n)
+
+    for ax, d_bg, d_sig, title in zip(axs.flat, data_bg, data_sig, subtitles):
+        if clip_outlier:
+            d_bg = dpr.clip_outlier(d_bg.flatten())
+            d_sig = dpr.clip_outlier(d_sig.flatten())
+        ax.hist(d_bg, bins=bins, density=normed, alpha=0.6, histtype='stepfilled', label='BG')
+        ax.hist(d_sig, bins=bins, density=normed, alpha=1.0, histtype='step', linewidth=1.3, label='SIG')
+        if ylogscale:
+            ax.set_yscale('log', nonpositive='clip')
+        ax.set_title(title)
+
+    for a in axs[:, 0]: a.set_ylabel('frac num events')
+    [a.axis('off') for a in axs.flat[len(data_bg):]] # turn off unused subplots
+    plt.suptitle(suptitle)
+    # plt.legend(loc='best')
+    plt.tight_layout(rect=(0, 0, 1, 0.95))
+    fig.savefig(os.path.join(fig_dir, plot_name + fig_format))
     plt.close(fig)
