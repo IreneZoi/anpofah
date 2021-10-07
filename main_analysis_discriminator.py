@@ -7,14 +7,14 @@ import dadrah.selection.loss_strategy as lost
 import anpofah.util.sample_names as samp
 
 # setup analysis inputs
-do_analyses = ['roc', 'loss', 'roc_qcd_sb_vs_sr', 'loss_qcd_sb_vs_sr', 'loss_combi']
-# do_analyses = ['roc', 'loss']
+# do_analyses = ['roc', 'loss', 'roc_qcd_sb_vs_sr', 'loss_qcd_sb_vs_sr', 'loss_combi']
+do_analyses = ['loss', 'loss_combi']
 run_n = 113
 fig_format = '.png'
 
 # loss strategies
 strategy_ids_total_loss = ['s1', 's2', 's3', 's4', 's5']
-strategy_ids_reco_kl_loss = ['rk5']
+strategy_ids_reco_kl_loss = ['rk5', 'rk5_1', 'rk5_01']
 strategy_ids_kl_loss = ['kl1', 'kl2', 'kl3', 'kl4', 'kl5']
 
 # set background sample to use
@@ -78,7 +78,7 @@ if 'loss_qcd_sb_vs_sr' in do_analyses:
 #			COMBINED LOSS DISTRIBUTION
 # *****************************************
 if 'loss_combi' in do_analyses:
-	loss_combi_ids = ['s3', 's4', 's5', 'rk5']
+	loss_combi_ids = ['r1', 'r2', 'kl1', 'kl2', 'rk5', 'rk5_1', 'rk5_01']
 	for loss_id in loss_combi_ids:
 		loss_strategy = lost.loss_strategy_dict[loss_id]
 		# plot loss distribution for qcd side vs signals

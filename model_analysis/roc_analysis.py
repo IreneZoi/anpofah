@@ -33,37 +33,64 @@ def get_mjj_binned_sample(sample, mjj_peak, window_pct=20):
 
 def get_mjj_binned_sample_center_bin(sample, mjj_peak, window_pct=20):
     left_edge, right_edge = mjj_peak * (1. - window_pct / 100.), mjj_peak * (1. + window_pct / 100.)
-    center_bin = sample[[(sample['mJJ'] >= left_edge) & (sample['mJJ'] <= right_edge)]]
-    return js.JetSample(sample.name, center_bin, title=sample.name + ' ' + str(left_edge / 1000) + ' <= mJJ <= ' + str(right_edge / 1000))
+    data_center_bin = sample[[(sample['mJJ'] >= left_edge) & (sample['mJJ'] <= right_edge)]]
+    return js.JetSample(sample.name, data_center_bin, title=sample.name + ' ' + str(left_edge / 1000) + ' <= mJJ <= ' + str(right_edge / 1000))
 
 
 def plot_roc(neg_class_losses, pos_class_losses, legend, title='ROC', legend_loc='best', plot_name='ROC', fig_dir=None, xlim=None, log_x=True, fig_format='.png'):
 
+    """
+        :param:neg_class_losses: array or list of arrays with losses for samples of class 0
+        :param:pos_class_losses: array or list of arrays with losses for samples of class 1
+        :param:legend: string or list of strings for legend
+        if lists, neg_class_losses, pos_class_losses and legend must be of same length
+    """
+
+    # set up matching roc curve inputs 
+    if not isinstance(neg_class_losses, list): neg_class_losses = [neg_class_losses]
+    if not isinstance(pos_class_losses, list): neg_class_losses = [pos_class_losses]
+    if len(neg_class_losses) == 1 and len(pos_class_losses) > 1: 
+        neg_class_losses = neg_class_losses*len(pos_class_losses)
+    if not isinstance(legend, list): legend = [legend]
+
+
     class_labels, losses = get_label_and_score_arrays(neg_class_losses, pos_class_losses) # stack losses and create according labels
-
     aucs = []
-    fig = plt.figure(figsize=(5, 5))
 
-    for y_true, loss, label in zip(class_labels, losses, legend):
-    	fpr, tpr, threshold = skl.roc_curve(y_true, loss)
-    	aucs.append(skl.roc_auc_score(y_true, loss))
-    	if log_x:
-    		plt.loglog(tpr, 1./fpr, label=label + " (auc " + "{0:.3f}".format(aucs[-1]) + ")")
-    	else:
-    		plt.semilogy(tpr, 1./fpr, label=label + " (auc " + "{0:.3f}".format(aucs[-1]) + ")")
+    palette = ['#3E96A1', '#EC4E20', '#FF9505', '#713E5A']
+    fig = plt.figure(figsize=(8, 8))
+
+    for y_true, loss, label, color in zip(class_labels, losses, legend, palette):
+        fpr, tpr, threshold = skl.roc_curve(y_true, loss)
+        aucs.append(skl.roc_auc_score(y_true, loss))
+        if log_x:
+            plt.loglog(tpr, 1./fpr, label=label + " (auc " + "{0:.3f}".format(aucs[-1]) + ")")
+        else:
+            plt.semilogy(tpr, 1./fpr, label=label + " (auc " + "{0:.3f}".format(aucs[-1]) + ")")
+
+
+    # add random decision line
+    # if log_x:
+    #     plt.loglog(np.linspace(0, 1, num=100), 1./np.linspace(0, 1, num=100), linewidth=1.2, linestyle='solid', color='silver')
+    # else:
+    #     plt.semilogy(np.linspace(0, 1, num=100), 1./np.linspace(0, 1, num=100), linewidth=1.2, linestyle='solid', color='silver')
+
     plt.grid()
     if xlim:
-    	plt.xlim(left=xlim)
+        plt.xlim(left=xlim)
     plt.xlabel('True positive rate')
     plt.ylabel('1 / False positive rate')
-    plt.legend(loc=legend_loc)
-    plt.tight_layout()
+    legend = plt.legend(loc=legend_loc, handlelength=1.5)
+    for leg in legend.legendHandles:
+        leg.set_linewidth(2.2)
     plt.title(title)
+    plt.tight_layout()
     if fig_dir:
-    	print('writing ROC plot to {}'.format(fig_dir))
-    	fig.savefig(os.path.join(fig_dir, plot_name + fig_format), bbox_inches='tight')
+        print('writing ROC plot to {}'.format(fig_dir))
+        fig.savefig(os.path.join(fig_dir, plot_name + fig_format), bbox_inches='tight')
     plt.close(fig)
     return aucs
+
 
 
 def plot_ROC_loss_strategy(bg_sample, sig_sample, strategy_ids, fig_dir, plot_name_suffix=None, log_x=True, fig_format='.png'):

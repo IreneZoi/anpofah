@@ -2,8 +2,14 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 import os
 import numpy as np
+import mplhep as hep
 
 import anpofah.util.data_preprocessing as dpr
+
+
+# Load CMS style sheet
+plt.style.use(hep.style.CMS)
+palette = ['#3E96A1', '#EC4E20', '#FF9505', '#713E5A', '#D62828', '#5F0F40']
 
 
 def subplots_rows_cols(n):
@@ -28,11 +34,11 @@ def plot_hist(data, bins=100, xlabel='x', ylabel='num frac', title='histogram', 
 
 
 def plot_multihist(data, bins=100, suptitle='histograms', titles=[], clip_outlier=False, plot_name='histograms', fig_dir=None, fig_format='.pdf'):
-    ''' plot len(data) histograms on same figure 
+    ''' plot len(data) histograms plots on same figure 
         data = list of features to plot (each element is flattened before plotting)
     '''
     rows_n, cols_n = subplots_rows_cols(len(data))
-    fig, axs = plt.subplots(nrows=rows_n,ncols=cols_n, figsize=(9,9))
+    fig, axs = plt.subplots(nrows=rows_n, ncols=cols_n, figsize=(9,9))
     for ax, dat, title in zip(axs.flat, data, titles):
         if clip_outlier:
             dat = dpr.clip_outlier(dat.flatten())
@@ -94,27 +100,27 @@ def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogr
     :param data: list/array of N elements where first element is assumed to be background and elements 2..N-1 assumed to be signal. all elements = array of length M
     '''
 
-    fig = plt.figure(figsize=(6, 4))
+    fig = plt.figure(figsize=(7, 5))
     alpha = 0.4
     histtype = 'stepfilled'
     if ylogscale:
         plt.yscale('log')
 
-    for i, dat in enumerate(data):
+    for i, (dat, col) in enumerate(zip(data,palette)):
         if i > 0:
             histtype = 'step'
             alpha = 1.0
         if clip_outlier:
             idx = dpr.is_outlier_percentile(dat)
             dat = dat[~idx]
-        plt.hist(dat, bins=bins, density=normed, alpha=alpha, histtype=histtype, label=legend[i])
+        plt.hist(dat, bins=bins, density=normed, alpha=alpha, histtype=histtype, label=legend[i], color=col)
 
     if xlim:
         plt.xlim(xlim)
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
-    plt.title(title)
-    plt.legend(loc=legend_loc)
+    plt.ylabel(ylabel, fontsize=14)
+    plt.xlabel(xlabel, fontsize=14)
+    plt.title(title, fontsize=18)
+    plt.legend(loc=legend_loc, fontsize=16)
     plt.tight_layout()
     plt.draw()
     if fig_dir:

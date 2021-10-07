@@ -6,19 +6,20 @@ import pofah.phase_space.cut_constants as cuts
 import anpofah.sample_analysis.sample_analysis as saan
 
 
-feature_analysis_all = False
+feature_analysis_all = True
 feature_analysis_qcd = False
-feature_analysis_sig = True
+feature_analysis_sig = False
 constituents_analysis = False
 
 # samples and their paths
 sample_ids_grav_35 = ['GtoWW35na','GtoWW35br']
 sample_ids_grav = ['GtoWW15na','GtoWW15br','GtoWW25na','GtoWW25br','GtoWW35na','GtoWW35br','GtoWW45na','GtoWW45br',]
+sample_ids_grav = ['GtoWW15br','GtoWW25br','GtoWW35br','GtoWW45br']
 #sample_ids_azzz = ['AtoHZ15', 'AtoHZ20', 'AtoHZ25', 'AtoHZ30', 'AtoHZ35', 'AtoHZ40', 'AtoHZ45']
 sample_ids_azzz = ['AtoHZ15', 'AtoHZ25', 'AtoHZ35', 'AtoHZ45']
 sample_ids_qcd = ['qcdSide', 'qcdSideExt', 'qcdSig', 'qcdSigExt']
 sample_ids_qcd_sb_vs_sr = ['qcdSide', 'qcdSig']
-sample_ids_qcd_grav = sample_ids_qcd_sb_vs_sr + sample_ids_grav
+sample_ids_qcd_grav = ['qcdSig'] + sample_ids_grav
 sample_ids_qcd_azzz = sample_ids_qcd_sb_vs_sr + sample_ids_azzz
 cuts = cuts.signalregion_cuts
 
@@ -46,7 +47,8 @@ if feature_analysis_qcd:
 
 if feature_analysis_all:
 
-	for (sample_ids, suffix) in zip([sample_ids_qcd_sb_vs_sr, sample_ids_qcd_grav, sample_ids_qcd_azzz, sample_ids_qcd],['sb_vs_sr', 'vs_grav', 'vs_azzz', 'sb_vs_sr_ext']):
+	# for (sample_ids, suffix) in zip([sample_ids_qcd_sb_vs_sr, sample_ids_qcd_grav, sample_ids_qcd_azzz, sample_ids_qcd],['sb_vs_sr', 'vs_grav', 'vs_azzz', 'sb_vs_sr_ext']):
+	for (sample_ids, suffix) in zip([sample_ids_qcd_grav, sample_ids_qcd],['vs_grav', 'sb_vs_sr_ext']):
 
 		# read 
 		data = sf.read_inputs_to_event_sample_dict_from_dir(sample_ids, paths, read_n=int(1e6), mJJ=1200.)
