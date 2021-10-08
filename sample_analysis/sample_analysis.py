@@ -7,6 +7,15 @@ def analyze_constituents(event_sample, clip_outlier=False, title_suffix='', plot
 	pu.plot_multihist(p2.transpose(), suptitle=' '.join([event_sample.name, 'particles J2', title_suffix]), titles=event_sample.particle_feature_names, clip_outlier=clip_outlier, plot_name='_'.join(['hist_const2', event_sample.name, plot_name_suffix]), fig_dir=fig_dir, fig_format=fig_format)
 
 
+
+def analyze_constituents_bg_vs_sig(sample_dict, sample_names=None, fig_dir='fig', fig_format='.pdf'):
+
+	sample_names = sample_names or sample_dict.keys()
+
+	particles= [sample_dict[s_name].get_particles() for s_name in sample_names]
+	p1, p2 = zip(*particles)
+
+
 def analyze_feature(sample_dict, feature_name, sample_names=None, title_suffix='', plot_name='plot', fig_dir=None, first_is_bg=True, clip_outlier=False, map_fun=None, legend_loc=(1.05,0), ylogscale=True, xlim=None, normed=True, fig_format='.pdf'):
 	''' for each sample in sample_dict: analyze feature of dijet 
 		if map_fun is given, process map_fun(feature) before analysis
