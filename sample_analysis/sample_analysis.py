@@ -11,9 +11,33 @@ def analyze_constituents(event_sample, clip_outlier=False, title_suffix='', plot
 def analyze_constituents_bg_vs_sig(sample_dict, sample_names=None, fig_dir='fig', fig_format='.pdf'):
 
 	sample_names = sample_names or sample_dict.keys()
+	p_feature_names = [r'$\eta$', r'$\phi$', 'pt']
 
 	particles= [sample_dict[s_name].get_particles() for s_name in sample_names]
-	p1, p2 = zip(*particles)
+	p1, p2 = zip(*particles) # 2 lists of p1 and p2 for set of samples, p1 ... [J_samples x N_events x K_features]
+	# transpose to make features be the leading dimension
+	p1 = p1.transpose(2,0,1)
+	p2 = p2.transpose(2,0,1)
+
+	fig, axs = plt.subplots(nrows=1, ncols=len(p1))
+
+    for ax, data, title in zip(axs.flat, data, p_feature_names):
+        ax.hist(data[0], bins=bins, density=normed, alpha=0.6, histtype='stepfilled', label=sample_names[0])
+        for data_sig, label in zip(data[1:], sample_names[1:]):
+        	ax.hist(data_sig, bins=bins, density=normed, alpha=1.0, histtype='step', linewidth=1.3, label=label)
+        if ylogscale:
+            ax.set_yscale('log', nonpositive='clip')
+        ax.set_title(title)
+
+    axs[0].set_ylabel('frac num events')
+    [a.axis('off') for a in axs.flat[len(data_bg):]] # turn off unused subplots
+    plt.suptitle(suptitle)
+    # plt.legend(loc='best')
+    plt.tight_layout(rect=(0, 0, 1, 0.95))
+    fig.savefig(os.path.join(fig_dir, plot_name + fig_format))
+    plt.close(fig)
+
+
 
 
 def analyze_feature(sample_dict, feature_name, sample_names=None, title_suffix='', plot_name='plot', fig_dir=None, first_is_bg=True, clip_outlier=False, map_fun=None, legend_loc=(1.05,0), ylogscale=True, xlim=None, normed=True, fig_format='.pdf'):

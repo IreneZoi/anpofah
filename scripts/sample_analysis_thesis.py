@@ -1,5 +1,7 @@
 import pofah.path_constants.sample_dict_file_parts_input as sdfi
 import pofah.util.event_sample as evsa
+import anpofah.sample_analysis as saan
+import pofah.util.sample_factory as safa
 
 
 
@@ -17,17 +19,17 @@ if __name__ == '__main__':
     print('plotting to '+ fig_dir)
 
     # read in all samples
-    paths = sf.SamplePathDirFactory(sdfi.path_dict)
+    paths = safa.SamplePathDirFactory(sdfi.path_dict)
 
 
     # *****************************************
     #         constituents analysis
     # *****************************************
 
-    # read gravitons
-    data = sf.read_inputs_to_event_sample_dict_from_dir(sample_ids_grav, paths) # , mJJ=1200.
-    # merge main and ext data for qcd
     read_n = int(1e5)
+    # read gravitons into sample dictionary
+    data = safa.read_inputs_to_event_sample_dict_from_dir(sample_ids_grav, paths, read_n=read_n) # , mJJ=1200.
+    # merge main and ext data for qcd
     qcd_side = evsa.EventSample.from_input_dir('qcdSide', paths.sample_dir_path('qcdSide'), read_n=read_n) # , **cuts
     qcd_side_ext = evsa.EventSample.from_input_dir('qcdSideExt', paths.sample_dir_path('qcdSideExt'), read_n=read_n)
     qcd_sig = evsa.EventSample.from_input_dir('qcdSig', paths.sample_dir_path('qcdSig'), read_n=read_n) # , **cuts
@@ -35,9 +37,11 @@ if __name__ == '__main__':
     qcd_side_all = qcd_side.merge(qcd_side_ext)
     qcd_sig_all = qcd_sig.merge(qcd_sig_ext)
 
-    # add qcd samples to data dict
+    # add qcd samples to sample dictionary
     data['qcdSide'] = qcd_side_all
     data['qcdSig'] = qcd_sig_all
+
+    saan.analyze_constituents_bg_vs_sig(data, fig_dir=fig_dir)
 
 
 

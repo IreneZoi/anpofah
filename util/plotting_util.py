@@ -12,8 +12,10 @@ plt.style.use(hep.style.CMS)
 palette = ['#3E96A1', '#EC4E20', '#FF9505', '#713E5A', '#D62828', '#5F0F40']
 
 
-def subplots_rows_cols(n):
+def subplots_rows_cols(n, single_row=False):
     ''' get number of subplot rows and columns needed to plot n histograms in one figure '''
+    if single_row:
+        return 1, len(n)
     return int(np.round(np.sqrt(n))), int(np.ceil(np.sqrt(n)))
 
 
@@ -128,13 +130,14 @@ def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogr
     plt.close(fig)
 
 
-def plot_bg_vs_sig_multihist(data_bg, data_sig, subtitles, bins=100, suptitle='histograms', clip_outlier=False, normed=True, ylogscale=True, plot_name='multihist', fig_dir='fig', fig_format='.png'):
+def plot_bg_vs_sig_multihist(data_bg, data_sig, subtitles, bins=100, suptitle='histograms', clip_outlier=False, normed=True, ylogscale=True, single_row=False, plot_name='multihist', fig_dir='fig', fig_format='.png'):
     '''
     plot background versus signal for multiple features as 1D histograms in one figure
     param data_bg: list of K features with each N background values
     param data_sig: list of K features with each N signal values
     '''
-    rows_n, cols_n = subplots_rows_cols(len(data_bg))
+
+    rows_n, cols_n = subplots_rows_cols(len(data_bg), single_row=single_row)
     fig, axs = plt.subplots(nrows=rows_n, ncols=cols_n)
 
     for ax, d_bg, d_sig, title in zip(axs.flat, data_bg, data_sig, subtitles):
@@ -154,3 +157,28 @@ def plot_bg_vs_sig_multihist(data_bg, data_sig, subtitles, bins=100, suptitle='h
     plt.tight_layout(rect=(0, 0, 1, 0.95))
     fig.savefig(os.path.join(fig_dir, plot_name + fig_format))
     plt.close(fig)
+
+
+def plot_bg_vs_multisig_multihist(data, clip_outlier=False):
+
+    ''' plot len(data) histograms plots on same figure 
+        data = list of features to plot (each element is flattened before plotting)
+    '''
+
+    feat_n = data[0].shape[-1] # number of features
+
+    fig, axs = plt.subplots(nrows=1, ncols=feat_n, figsize=(5,12))
+
+    for ax, dat, title in zip(axs.flat, data, titles):
+        if clip_outlier:
+            dat = dpr.clip_outlier(dat.flatten())
+        plot_hist_on_axis(ax, dat.flatten(), bins=bins, title=title)
+    [a.axis('off') for a in axs.flat[len(data):]] # turn off unused subplots
+    plt.suptitle(suptitle)
+    plt.tight_layout(rect=(0, 0, 1, 0.95))
+    if fig_dir is not None:
+        fig.savefig(os.path.join(fig_dir, plot_name + fig_format))
+    else:
+        plt.show();
+    plt.close(fig)
+
