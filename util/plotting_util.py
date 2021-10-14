@@ -130,22 +130,26 @@ def plot_bg_vs_sig(data, bins=100, xlabel='x', ylabel='num frac', title='histogr
     plt.close(fig)
 
 
-def plot_bg_vs_sig_multihist(data_bg, data_sig, subtitles, bins=100, suptitle='histograms', clip_outlier=False, normed=True, ylogscale=True, single_row=False, plot_name='multihist', fig_dir='fig', fig_format='.png'):
+def plot_bg_vs_sig_multihist(data_bg, data_sig, subtitles, bins=100, suptitle='histograms', clip_outlier=False, normed=True, \
+        ylogscale=True, single_row=False, plot_name='multihist', fig_dir='fig', fig_format='.png', histtype_sig='step', fig_size=(7,7)):
     '''
     plot background versus signal for multiple features as 1D histograms in one figure
-    param data_bg: list of K features with each N background values
-    param data_sig: list of K features with each N signal values
+    param data_bg: ndarray(!) of K features with each N background values
+    param data_sig: ndarray(!) or list of ndarrays of K features with each N signal values
     '''
 
+    # check if data_sig contains only one sample and wrap into list
+    if not isinstance(data_sig, list): data_sig = [data_sig]
+
     rows_n, cols_n = subplots_rows_cols(len(data_bg), single_row=single_row)
-    fig, axs = plt.subplots(nrows=rows_n, ncols=cols_n)
+    fig, axs = plt.subplots(nrows=rows_n, ncols=cols_n, figsize=fig_size)
 
     for ax, d_bg, d_sig, title in zip(axs.flat, data_bg, data_sig, subtitles):
         if clip_outlier:
             d_bg = dpr.clip_outlier(d_bg.flatten())
             d_sig = dpr.clip_outlier(d_sig.flatten())
         ax.hist(d_bg, bins=bins, density=normed, alpha=0.6, histtype='stepfilled', label='BG')
-        ax.hist(d_sig, bins=bins, density=normed, alpha=1.0, histtype='step', linewidth=1.3, label='SIG')
+        ax.hist(d_sig, bins=bins, density=normed, alpha=1.0, histtype=histtype_sig, linewidth=1.3, label='SIG')
         if ylogscale:
             ax.set_yscale('log', nonpositive='clip')
         ax.set_title(title)

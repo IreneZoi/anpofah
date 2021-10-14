@@ -93,32 +93,38 @@ def plot_roc(neg_class_losses, pos_class_losses, legend, title='ROC', legend_loc
 
 
 
-def plot_ROC_loss_strategy(bg_sample, sig_sample, strategy_ids, fig_dir, plot_name_suffix=None, log_x=True, fig_format='.png'):
+def plot_ROC_loss_strategy(bg_sample, sig_sample, strategy_ids, fig_dir, plot_name_suffix=None, log_x=True, fig_format='.png', loss_dict=ls.loss_strategy_dict):
 
-    legend = [ls.loss_strategy_dict[s_id].title_str for s_id in strategy_ids]
+    legend = [loss_dict[s_id].title_str for s_id in strategy_ids]
     plot_name = '_'.join(filter(None, ['ROC', sig_sample.name, plot_name_suffix]))
     # compute combined loss for each loss strategy
-    neg_class_losses = [ls.loss_strategy_dict[s_id](bg_sample) for s_id in strategy_ids]
-    pos_class_losses = [ls.loss_strategy_dict[s_id](sig_sample) for s_id in strategy_ids]
+    neg_class_losses = [loss_dict[s_id](bg_sample) for s_id in strategy_ids]
+    pos_class_losses = [loss_dict[s_id](sig_sample) for s_id in strategy_ids]
     plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='ROC ' + sig_sample.title, plot_name=plot_name, fig_dir=fig_dir, log_x=log_x, fig_format=fig_format)
 
 
-def plot_binned_ROC_loss_strategy(bg_sample, sig_sample, mass_center, strategy_ids, fig_dir, plot_name_suffix=None, log_x=True, fig_format='.png'):
+def plot_binned_ROC_loss_strategy(bg_sample, sig_sample, mass_center, strategy_ids, fig_dir, plot_name_suffix=None, log_x=True, fig_format='.png', loss_dict=ls.loss_strategy_dict):
 
-	_, bg_center_bin_sample, _ = get_mjj_binned_sample(bg_sample, mass_center)
-	_, sig_center_bin_sample, _ = get_mjj_binned_sample(sig_sample, mass_center)
+    _, bg_center_bin_sample, _ = get_mjj_binned_sample(bg_sample, mass_center)
+    _, sig_center_bin_sample, _ = get_mjj_binned_sample(sig_sample, mass_center)
+
+    plot_name_suffix = 'mJJ_'+str(mass_center)+'_bin' + ('_' + plot_name_suffix if plot_name_suffix else '')
     
-	plot_ROC_loss_strategy(bg_sample=bg_center_bin_sample, sig_sample=sig_center_bin_sample, strategy_ids=strategy_ids, fig_dir=fig_dir, plot_name_suffix='mJJ_'+str(mass_center)+'_bin' + ('_' + plot_name_suffix if plot_name_suffix else ''), log_x=log_x, fig_format=fig_format)
+    plot_ROC_loss_strategy(bg_sample=bg_center_bin_sample, sig_sample=sig_center_bin_sample, strategy_ids=strategy_ids, \
+            fig_dir=fig_dir, plot_name_suffix=plot_name_suffix, log_x=log_x, fig_format=fig_format, loss_dict=loss_dict)
 
 
-def plot_binned_ROC(bg_samples, sig_samples, strategy, mass_center, fig_dir, plot_name_suffix, legend=['run1', 'run2'], log_x=True):
+def plot_binned_ROC(bg_samples, sig_samples, strategy, mass_center, fig_dir, plot_name_suffix, title_suffix='', legend=['run1', 'run2'], log_x=True):
 
-	binned_bgs = [get_mjj_binned_sample_center_bin(s, mass_center) for s in bg_samples]
-	binned_sigs = [get_mjj_binned_sample_center_bin(s, mass_center) for s in sig_samples]
+    if not isinstance(bg_samples, list): bg_samples = [bg_samples]
+    if not isinstance(sig_samples, list): sig_samples = [sig_samples]
 
-	neg_class_losses = [strategy(b) for b in binned_bgs]
-	pos_class_losses = [strategy(s) for s in binned_sigs]
+    binned_bgs = [get_mjj_binned_sample_center_bin(s, mass_center) for s in bg_samples]
+    binned_sigs = [get_mjj_binned_sample_center_bin(s, mass_center) for s in sig_samples]
 
-	plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='model comparison ROC binned strategy ' + strategy.title_str + ' ' + binned_sigs[0].name, log_x=True, plot_name='ROC_binned_logTPR_' + strategy.file_str + '_' + binned_sigs[0].name, fig_dir=fig_dir)
+    neg_class_losses = [strategy(b) for b in binned_bgs]
+    pos_class_losses = [strategy(s) for s in binned_sigs]
+
+    plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='model comparison ROC binned ' + binned_sigs[0].name, log_x=True, plot_name='ROC_binned_logTPR_' + strategy.file_str + '_' + binned_sigs[0].name, fig_dir=fig_dir)
 
 
