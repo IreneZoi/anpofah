@@ -45,7 +45,13 @@ if __name__ == '__main__':
     saan.analyze_constituents_bg_vs_sig(data, fig_dir=fig_dir)
 
 
+    # *****************************************
+    #         jet feature analysis
+    # *****************************************
 
+    # jet_features = ['mJJ', 'DeltaEtaJJ', 'DeltaPhiJJ', 'j1Pt', 'j2Pt', 'j1Eta']
+    jet_features = ['mJJ', 'DeltaEtaJJ', 'DeltaPhiJJ', 'j1Pt', 'j2Pt']
 
-
+    for feature in jet_features:
+        saan.analyze_feature(data, feature, plot_name=feature+'_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=False, legend_loc='best', fig_format='.png')
 

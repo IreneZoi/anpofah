@@ -21,47 +21,23 @@ def analyze_constituents_bg_vs_sig(sample_dict, sample_names=None, fig_dir='fig'
     sample_names = sample_names or list(sample_dict.keys())
     qcd_idx = [i for (i,s) in enumerate(sample_names) if 'qcd' in s][0]
     p_feature_names = [r'$\eta$', r'$\phi$', 'pt']
-    bins = 100
-    ylogscale = True
-    plot_name = 'particles_dist'
+    plot_name = 'constituent_distribution'
 
     # import ipdb; ipdb.set_trace()
 
-    # TODO: add p2, outsource to plotting util
+    p1 = [sample_dict[s_name].get_particles(jet_n=0).transpose(2,1,0).reshape(len(p_feature_names), -1) for s_name in sample_names] # [J_samples x [K_features x N_events * 100 particles]]
+    p2 = [sample_dict[s_name].get_particles(jet_n=1).transpose(2,1,0).reshape(len(p_feature_names), -1) for s_name in sample_names] # [J_samples x [K_features x N_events * 100 particles]]
 
-    p1 = [sample_dict[s_name].get_particles(jet_n=0).transpose(2,1,0).reshape(len(p_feature_names), -1) for s_name in sample_names] # [J_samples x K_features x N_events * 100 particles]
-    p2 = [sample_dict[s_name].get_particles(jet_n=1).transpose(2,1,0).reshape(len(p_feature_names), -1) for s_name in sample_names] # [J_samples x K_features x N_events * 100 particles]
+    pu.plot_bg_vs_sig_multihist(data=p1, feature_names=p_feature_names, sample_names=sample_names, single_row=True, plot_name=plot_name+'_p1', fig_dir=fig_dir, fig_format='.png', histtype_sig='step', fig_size=(12,6))
+    pu.plot_bg_vs_sig_multihist(data=p2, feature_names=p_feature_names, sample_names=sample_names, single_row=True, plot_name=plot_name+'_p2', fig_dir=fig_dir, fig_format='.png', histtype_sig='step', fig_size=(12,6))
 
-    fig, axs = plt.subplots(nrows=1, ncols=len(p1), figsize=(12,3))
-
-    #plot_bg_vs_sig_multihist(p1[0], p1[1:], axis_titles=p_feature_names, single_row=True) # p1[0]: [K x N*100], p1[1:]: [5 x [K x N*100]]
-
-    # for each feature
-    for k, (ax, xlabel) in enumerate(zip(axs.flat, p_feature_names)):
-        # loop through datasets
-        for i, particles in enumerate(p1): 
-            if i == qcd_idx:
-                ax.hist(particles[k], bins=bins, density=True, alpha=0.6, histtype='stepfilled', label=sample_names[i])
-            else:
-                ax.hist(particles[k], bins=bins, density=True, alpha=1.0, histtype='step', linewidth=1.3, label=sample_names[i])
-        if ylogscale:
-            ax.set_yscale('log', nonpositive='clip')
-        ax.set_xlabel(xlabel)
-    
-    axs[0].set_ylabel('frac num events')
-    # plt.suptitle(suptitle)
-    plt.legend(loc='best')
-    plt.tight_layout(rect=(0, 0, 1, 0.95))
-    print('writing figure to ' + os.path.join(fig_dir, plot_name + fig_format))
-    fig.savefig(os.path.join(fig_dir, plot_name + fig_format))
-    plt.close(fig)
 
 
 def analyze_feature(sample_dict, feature_name, sample_names=None, title_suffix='', plot_name='plot', fig_dir=None, first_is_bg=True, clip_outlier=False, map_fun=None, legend_loc=(1.05,0), ylogscale=True, xlim=None, normed=True, fig_format='.pdf'):
     ''' for each sample in sample_dict: analyze feature of dijet 
         if map_fun is given, process map_fun(feature) before analysis
     '''
-    sample_names = sample_names or sample_dict.keys()
+    sample_names = sample_names or list(sample_dict.keys())
     legend = [sample_dict[s].name for s in sample_names]
     if map_fun:
         feature = [map_fun(sample_dict[s]) for s in sample_names]
