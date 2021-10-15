@@ -11,30 +11,30 @@ def analyze_constituents(event_sample, clip_outlier=False, title_suffix='', plot
     pu.plot_multihist(p2.transpose(), suptitle=' '.join([event_sample.name, 'particles J2', title_suffix]), titles=event_sample.particle_feature_names, clip_outlier=clip_outlier, plot_name='_'.join(['hist_const2', event_sample.name, plot_name_suffix]), fig_dir=fig_dir, fig_format=fig_format)
 
 
-def analyze_constituents_bg_vs_sig(sample_dict, sample_names=None, fig_dir='fig', fig_format='.pdf'):
+def analyze_constituents_bg_vs_sig(event_sample_dict, sample_names=None, fig_dir='fig', fig_format='.pdf'):
 
     '''
         plot multihist bg vs sig for all constituent features and multiple signal samples
         assumes that first element in dict is bg!
     '''
 
-    sample_names = sample_names or list(sample_dict.keys())
+    sample_names = sample_names or list(event_sample_dict.keys())
     qcd_idx = [i for (i,s) in enumerate(sample_names) if 'qcd' in s][0]
     p_feature_names = [r'$\eta$', r'$\phi$', 'pt']
     plot_name = 'constituent_distribution'
 
     # import ipdb; ipdb.set_trace()
 
-    p1 = [sample_dict[s_name].get_particles(jet_n=0).transpose(2,1,0).reshape(len(p_feature_names), -1) for s_name in sample_names] # [J_samples x [K_features x N_events * 100 particles]]
-    p2 = [sample_dict[s_name].get_particles(jet_n=1).transpose(2,1,0).reshape(len(p_feature_names), -1) for s_name in sample_names] # [J_samples x [K_features x N_events * 100 particles]]
+    p1 = [event_sample_dict[s_name].get_particles(jet_n=0).transpose(2,1,0).reshape(len(p_feature_names), -1) for s_name in sample_names] # [J_samples x [K_features x N_events * 100 particles]]
+    p2 = [event_sample_dict[s_name].get_particles(jet_n=1).transpose(2,1,0).reshape(len(p_feature_names), -1) for s_name in sample_names] # [J_samples x [K_features x N_events * 100 particles]]
 
     pu.plot_bg_vs_sig_multihist(data=p1, feature_names=p_feature_names, sample_names=sample_names, single_row=True, plot_name=plot_name+'_p1', fig_dir=fig_dir, fig_format='.png', histtype_sig='step', fig_size=(12,6))
     pu.plot_bg_vs_sig_multihist(data=p2, feature_names=p_feature_names, sample_names=sample_names, single_row=True, plot_name=plot_name+'_p2', fig_dir=fig_dir, fig_format='.png', histtype_sig='step', fig_size=(12,6))
 
 
 
-def analyze_feature(sample_dict, feature_name, sample_names=None, title_suffix='', plot_name='plot', fig_dir=None, first_is_bg=True, clip_outlier=False, map_fun=None, legend_loc=(1.05,0), ylogscale=True, xlim=None, normed=True, fig_format='.pdf'):
-    ''' for each sample in sample_dict: analyze feature of dijet 
+def analyze_feature(sample_dict, feature_name, sample_names=None, title_suffix='', plot_name='plot', fig_dir=None, bg_vs_sig=True, clip_outlier=False, map_fun=None, legend_loc=(1.05,0), ylogscale=True, xlim=None, normed=True, fig_format='.pdf'):
+    ''' for each sample (event or jet) in sample_dict: analyze feature of dijet 
         if map_fun is given, process map_fun(feature) before analysis
     '''
     sample_names = sample_names or list(sample_dict.keys())
@@ -43,8 +43,8 @@ def analyze_feature(sample_dict, feature_name, sample_names=None, title_suffix='
         feature = [map_fun(sample_dict[s]) for s in sample_names]
     else:
         feature = [sample_dict[s][feature_name] for s in sample_names]
-    if first_is_bg:
-        pu.plot_bg_vs_sig(feature, legend=legend, xlabel=feature_name, title=' '.join([r'distribution ', feature_name, title_suffix]), legend_loc=legend_loc, plot_name=plot_name, fig_dir=fig_dir, clip_outlier=clip_outlier, ylogscale=ylogscale, xlim=xlim, fig_format=fig_format)
+    if bg_vs_sig:
+        pu.plot_bg_vs_sig(feature, sample_names, legend=legend, xlabel=feature_name, title=' '.join([r'distribution ', feature_name, title_suffix]), legend_loc=legend_loc, plot_name=plot_name, fig_dir=fig_dir, clip_outlier=clip_outlier, ylogscale=ylogscale, xlim=xlim, fig_format=fig_format)
     else:
         return pu.plot_hist(feature, legend=legend, xlabel=feature_name, title=' '.join([r'distribution ', feature_name, title_suffix]), legend_loc=legend_loc, plot_name=plot_name, fig_dir=fig_dir, ylogscale=ylogscale, normed=normed, clip_outlier=clip_outlier, xlim=xlim, fig_format=fig_format)
 

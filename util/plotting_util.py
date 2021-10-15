@@ -96,7 +96,7 @@ def plot_hist_2d_on_axis(ax, x, y, xlabel, ylabel, title):
     return im
 
 
-def plot_bg_vs_sig(data, feature_names, bins=100, xlabel='x', ylabel='fraction events', title='histogram', \
+def plot_bg_vs_sig(data, sample_names, bins=100, xlabel='x', ylabel='fraction events', title='histogram', \
     plot_name='plot', fig_dir=None, legend=['bg','sig'], ylogscale=True, normed=True, legend_loc='best', \
     clip_outlier=False, xlim=None, fig_format='.pdf', histtype_sig='step'):
     '''
@@ -123,17 +123,18 @@ def plot_bg_vs_sig(data, feature_names, bins=100, xlabel='x', ylabel='fraction e
         plt.xlim(xlim)
     plt.ylabel(ylabel, fontsize=14)
     plt.xlabel(xlabel, fontsize=14)
-    plt.title(title, fontsize=18)
-    plt.legend(loc=legend_loc, fontsize=16)
+    #plt.title(title, fontsize=18)
+    handles, labels = plt.gca().get_legend_handles_labels()
+    lgd = fig.legend(handles, labels, bbox_to_anchor=(0.5,-0.05), loc="lower center", ncol=len(data), fontsize=16)
     plt.tight_layout()
     plt.draw()
     if fig_dir:
-        fig.savefig(os.path.join(fig_dir, plot_name + fig_format))
+        fig.savefig(os.path.join(fig_dir, plot_name + fig_format), bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.close(fig)
 
 
 def plot_bg_vs_sig_multihist(data, feature_names, sample_names, bins=100, suptitle=None, clip_outlier=False, normed=True, \
-        ylogscale=True, single_row=False, plot_name='multihist', fig_dir='fig', fig_format='.png', histtype_sig='step', fig_size=(7,7)):
+        ylogscale=True, single_row=False, plot_name='multihist', fig_dir='fig', fig_format='.pdf', histtype_sig='step', fig_size=(7,7)):
     '''
         plot background versus signal for multiple features as 1D histograms in one figure
         :param data: list of J ndarrays of K features with each N values, assuming J = 1 BG + M SIG datasets

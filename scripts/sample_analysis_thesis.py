@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
 
     # *****************************************
-    #         constituents analysis
+    #         read in data
     # *****************************************
 
     read_n = int(1e3)
@@ -35,12 +35,19 @@ if __name__ == '__main__':
     qcd_side_ext = evsa.EventSample.from_input_dir('qcdSideExt', paths.sample_dir_path('qcdSideExt'), read_n=read_n)
     # qcd_sig = evsa.EventSample.from_input_dir('qcdSig', paths.sample_dir_path('qcdSig'), read_n=read_n) # , **cuts
     # qcd_sig_ext = evsa.EventSample.from_input_dir('qcdSigExt', paths.sample_dir_path('qcdSigExt'), read_n=read_n)
-    qcd_side_all = qcd_side.merge(qcd_side_ext)
-    # qcd_sig_all = qcd_sig.merge(qcd_sig_ext)
+    qcd_side_all = qcd_side.merge(qcd_side_ext, name='qcdSideAll')
+    # qcd_sig_all = qcd_sig.merge(qcd_sig_ext, name='qcdSigAll')
 
     # add qcd samples to sample dictionary
     data['qcdSide'] = qcd_side_all
     # data['qcdSig'] = qcd_sig_all
+
+    bg_id = 'qcdSide'
+
+    # *****************************************
+    #         constituents analysis
+    # *****************************************
+
 
     saan.analyze_constituents_bg_vs_sig(data, fig_dir=fig_dir)
 
@@ -53,5 +60,5 @@ if __name__ == '__main__':
     jet_features = ['mJJ', 'DeltaEtaJJ', 'DeltaPhiJJ', 'j1Pt', 'j2Pt']
 
     for feature in jet_features:
-        saan.analyze_feature(data, feature, plot_name=feature+'_qcd_'+suffix, fig_dir=fig_dir, first_is_bg=False, legend_loc='best', fig_format='.png')
+        saan.analyze_feature(data, feature, plot_name=feature+'_'+bg_id, fig_dir=fig_dir, bg_vs_sig=True)
 
