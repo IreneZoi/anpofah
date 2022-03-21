@@ -25,7 +25,7 @@ def plot_roc(neg_class_losses, pos_class_losses_na, pos_class_losses_br, legend_
     styles = ['dashed', 'dotted', 'solid'][:len(neg_class_losses)]*2 # take as many styles as there are loss strategies to plot, times two for narrow & broad
 
     aucs = []
-    fig = plt.figure() # figsize=(5, 5)
+    fig = plt.figure(figsize=(8, 8)) # figsize=(5, 5)
 
     for y_true, loss, color, style in zip(class_labels, losses, colors, styles):
         fpr, tpr, threshold = skl.roc_curve(y_true, loss)
@@ -73,11 +73,11 @@ def plot_mass_center_ROC(bg_sample, sig_sample_na, sig_sample_br, mass_center, p
     _, sig_center_bin_sample_na, _ = ra.get_mjj_binned_sample(sig_sample_na, mass_center)
     _, sig_center_bin_sample_br, _ = ra.get_mjj_binned_sample(sig_sample_br, mass_center)
 
-    # strategy_ids = ['r5', 'kl5', 'rk5']
-    strategy_ids = ['r5', 'kl5']
+    strategy_ids = ['r5', 'kl5', 'rk5_05']
+    # strategy_ids = ['r5', 'kl5']
     title_strategy_suffix = 'loss J1 && loss J2 > LT'
-    # legend_str = ['Reco', r'$D_{KL}$', 'Combined']
-    legend_str = ['Reco', r'$D_{KL}$']
+    legend_str = ['Reco', r'$D_{KL}$',  r'Reco + 0.5$D_{KL}$']
+    # legend_str = ['Reco', r'$D_{KL}$']
     plot_name = '_'.join(filter(None, ['ROC', sig_sample_na.name.replace('Reco', 'br'), plot_name_suffix]))
     title = r'$G_{{RS}} \to WW \, m_{{G}} = {} TeV$'.format(mass_center/1000)
     log_x = False
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     # set background sample to use (sideband or signalregion)
     BG_sample = samp.BG_SR_sample
     mass_centers = [1500, 2500, 3500, 4500]
-    plot_name_suffix = None
+    plot_name_suffix = 'combi_05KL'
 
     # set up analysis outputs 
     experiment = ex.Experiment(run_n).setup(model_analysis_dir=True)
