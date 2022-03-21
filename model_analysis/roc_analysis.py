@@ -45,6 +45,14 @@ def plot_roc(neg_class_losses, pos_class_losses, legend, title='ROC', legend_loc
     fig = plt.figure(figsize=(5, 5))
 
     for y_true, loss, label in zip(class_labels, losses, legend):
+    	print(y_true)
+    	print(loss)
+    	print(np.isnan(loss).any())
+    	print(np.isinf(loss).any())
+    	print(np.argwhere(np.isnan(loss)))
+    	print(np.argwhere(np.isinf(loss)))
+    	print(len(np.argwhere(np.isnan(loss))))
+    	print(len(np.argwhere(np.isinf(loss))))
     	fpr, tpr, threshold = skl.roc_curve(y_true, loss)
     	aucs.append(skl.roc_auc_score(y_true, loss))
     	if log_x:
@@ -80,6 +88,7 @@ def plot_binned_ROC_loss_strategy(bg_sample, sig_sample, mass_center, strategy_i
 
 	_, bg_center_bin_sample, _ = get_mjj_binned_sample(bg_sample, mass_center)
 	_, sig_center_bin_sample, _ = get_mjj_binned_sample(sig_sample, mass_center)
+	print('Making binned Mjj ROC for {}, BG/SIG sample size {}/{}'.format(plot_name_suffix,len(bg_center_bin_sample),len(sig_center_bin_sample)))
     
 	plot_ROC_loss_strategy(bg_sample=bg_center_bin_sample, sig_sample=sig_center_bin_sample, strategy_ids=strategy_ids, fig_dir=fig_dir, plot_name_suffix='mJJ_'+str(mass_center)+'_bin' + ('_' + plot_name_suffix if plot_name_suffix else ''), log_x=log_x, fig_format=fig_format)
 

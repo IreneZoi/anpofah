@@ -1,7 +1,9 @@
-
-BG_SB_sample = 'qcdSideExtReco'
+BG_SB_sample = 'qcdSideReco'
 BG_SR_sample = 'qcdSigReco'
-SIG_samples_na = ['GtoWW15naReco', 'GtoWW25naReco', 'GtoWW35naReco', 'GtoWW45naReco']
-SIG_samples_br = ['GtoWW15brReco', 'GtoWW25brReco', 'GtoWW35brReco', 'GtoWW45brReco']
-SIG_samples = SIG_samples_na + SIG_samples_br
+SIG_samples_br = []
+SIG_samples_na = []
+SIG_samples = 'ttbarSigReco'.split(',')
+#SIG_samples = 'gravitonSigReco'.split(',')
+#mass_centers = [2500,2500,2500,2600]
+mass_centers = [120,80,170] #testing ttbar, trying to have all, W and top jet mass windows
 all_samples = [BG_SB_sample, BG_SR_sample] + SIG_samples
