@@ -30,11 +30,29 @@ def get_mjj_binned_sample(sample, mjj_peak, window_pct=20):
 
     return [left_bin_ds, center_bin_ds, right_bin_ds]
 
+def get_mjet_binned_sample(sample, mjet_peak,jet = '1', window_pct=20):
+    left_edge, right_edge = mjet_peak * (1. - window_pct / 100.), mjet_peak * (1. + window_pct / 100.)
+
+    left_bin = sample[[sample['j'+jet+'M'] < left_edge]]
+    center_bin = sample[[(sample['j'+jet+'M'] >= left_edge) & (sample['j'+jet+'M'] <= right_edge)]]
+    right_bin = sample[[sample['j'+jet+'M'] > right_edge]]
+
+    left_bin_ds = js.JetSample(sample.name, left_bin, title=sample.name + ' j'+jet+'M < ' + str(left_edge / 1000))
+    center_bin_ds = js.JetSample(sample.name, center_bin, title=sample.name + ' ' + str(left_edge / 1000) + ' <= j'+jet+'M <= ' + str(right_edge / 1000))
+    right_bin_ds = js.JetSample(sample.name, right_bin, title=sample.name + ' j'+jet+'M > ' + str(right_edge / 1000))
+
+    return [left_bin_ds, center_bin_ds, right_bin_ds]
+
 
 def get_mjj_binned_sample_center_bin(sample, mjj_peak, window_pct=20):
     left_edge, right_edge = mjj_peak * (1. - window_pct / 100.), mjj_peak * (1. + window_pct / 100.)
     center_bin = sample[[(sample['mJJ'] >= left_edge) & (sample['mJJ'] <= right_edge)]]
     return js.JetSample(sample.name, center_bin, title=sample.name + ' ' + str(left_edge / 1000) + ' <= mJJ <= ' + str(right_edge / 1000))
+
+def get_mjet_binned_sample_center_bin(sample, mjet_peak,jet='1', window_pct=20):
+    left_edge, right_edge = mjet_peak * (1. - window_pct / 100.), mjet_peak * (1. + window_pct / 100.)
+    center_bin = sample[[(sample['j'+jet+'M'] >= left_edge) & (sample['j'+jet+'M'] <= right_edge)]]
+    return js.JetSample(sample.name, center_bin, title=sample.name + ' ' + str(left_edge / 1000) + ' <= j'+jet+'M <= ' + str(right_edge / 1000))
 
 
 def plot_roc(neg_class_losses, pos_class_losses, legend, title='ROC', legend_loc='best', plot_name='ROC', fig_dir=None, xlim=None, log_x=True, fig_format='.png'):
@@ -84,23 +102,52 @@ def plot_ROC_loss_strategy(bg_sample, sig_sample, strategy_ids, fig_dir, plot_na
     plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='ROC ' + sig_sample.title, plot_name=plot_name, fig_dir=fig_dir, log_x=log_x, fig_format=fig_format)
 
 
-def plot_binned_ROC_loss_strategy(bg_sample, sig_sample, mass_center, strategy_ids, fig_dir, plot_name_suffix=None, log_x=True, fig_format='.png'):
+def plot_binned_ROC_loss_strategy(bg_sample, sig_sample, mass_center, strategy_ids, fig_dir,variable='mJJ', plot_name_suffix=None, log_x=True, fig_format='.png'):
+    if variable == 'mJJ':
+    	_, bg_center_bin_sample, _ = get_mjj_binned_sample(bg_sample, mass_center)
+    	_, sig_center_bin_sample, _ = get_mjj_binned_sample(sig_sample, mass_center)
+    	print('Making binned Mjj ROC for {}, BG/SIG sample size {}/{}'.format(plot_name_suffix,len(bg_center_bin_sample),len(sig_center_bin_sample)))
+    	plot_ROC_loss_strategy(bg_sample=bg_center_bin_sample, sig_sample=sig_center_bin_sample, strategy_ids=strategy_ids, fig_dir=fig_dir, plot_name_suffix='mJJ_'+str(mass_center)+'_bin' + ('_' + plot_name_suffix if plot_name_suffix else ''), log_x=log_x, fig_format=fig_format)
+    elif variable == 'j1M':
+    	_, bg_center_bin_sample, _ = get_mjet_binned_sample(bg_sample, mass_center)
+    	_, sig_center_bin_sample, _ = get_mjet_binned_sample(sig_sample, mass_center)
+    	print('Making binned j1M ROC for {}, BG/SIG sample size {}/{}'.format(plot_name_suffix,len(bg_center_bin_sample),len(sig_center_bin_sample)))
+    	plot_ROC_loss_strategy(bg_sample=bg_center_bin_sample, sig_sample=sig_center_bin_sample, strategy_ids=strategy_ids, fig_dir=fig_dir, plot_name_suffix='j1M_'+str(mass_center)+'_bin' + ('_' + plot_name_suffix if plot_name_suffix else ''), log_x=log_x, fig_format=fig_format)
+    elif variable == 'j2M':
+    	_, bg_center_bin_sample, _ = get_mjet_binned_sample(bg_sample, mass_center,'2')
+    	_, sig_center_bin_sample, _ = get_mjet_binned_sample(sig_sample, mass_center,'2')
+    	print('Making binned j2M ROC for {}, BG/SIG sample size {}/{}'.format(plot_name_suffix,len(bg_center_bin_sample),len(sig_center_bin_sample)))
+    	plot_ROC_loss_strategy(bg_sample=bg_center_bin_sample, sig_sample=sig_center_bin_sample, strategy_ids=strategy_ids, fig_dir=fig_dir, plot_name_suffix='j2M_'+str(mass_center)+'_bin' + ('_' + plot_name_suffix if plot_name_suffix else ''), log_x=log_x, fig_format=fig_format)
+    else:
+        print('Error!!!! varaible '+variable+' not known')
 
-	_, bg_center_bin_sample, _ = get_mjj_binned_sample(bg_sample, mass_center)
-	_, sig_center_bin_sample, _ = get_mjj_binned_sample(sig_sample, mass_center)
-	print('Making binned Mjj ROC for {}, BG/SIG sample size {}/{}'.format(plot_name_suffix,len(bg_center_bin_sample),len(sig_center_bin_sample)))
-    
-	plot_ROC_loss_strategy(bg_sample=bg_center_bin_sample, sig_sample=sig_center_bin_sample, strategy_ids=strategy_ids, fig_dir=fig_dir, plot_name_suffix='mJJ_'+str(mass_center)+'_bin' + ('_' + plot_name_suffix if plot_name_suffix else ''), log_x=log_x, fig_format=fig_format)
 
+def plot_binned_ROC(bg_samples, sig_samples, strategy, mass_center, fig_dir, plot_name_suffix,variable = 'mJJ', legend=['run1', 'run2'], log_x=True):
+    if variable == 'mJJ':
+	    binned_bgs = [get_mjj_binned_sample_center_bin(s, mass_center) for s in bg_samples]
+	    binned_sigs = [get_mjj_binned_sample_center_bin(s, mass_center) for s in sig_samples]
 
-def plot_binned_ROC(bg_samples, sig_samples, strategy, mass_center, fig_dir, plot_name_suffix, legend=['run1', 'run2'], log_x=True):
+	    neg_class_losses = [strategy(b) for b in binned_bgs]
+	    pos_class_losses = [strategy(s) for s in binned_sigs]
 
-	binned_bgs = [get_mjj_binned_sample_center_bin(s, mass_center) for s in bg_samples]
-	binned_sigs = [get_mjj_binned_sample_center_bin(s, mass_center) for s in sig_samples]
+	    plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='model comparison ROC binned strategy ' + strategy.title_str + ' ' + binned_sigs[0].name, log_x=True, plot_name='ROC_binned_logTPR_' + strategy.file_str + '_mJJ_' + binned_sigs[0].name, fig_dir=fig_dir)
 
-	neg_class_losses = [strategy(b) for b in binned_bgs]
-	pos_class_losses = [strategy(s) for s in binned_sigs]
+    elif variable == 'j1M':
+        binned_bgs = [get_mjet_binned_sample_center_bin(s, mass_center) for s in bg_samples]
+        binned_sigs = [get_mjet_binned_sample_center_bin(s, mass_center) for s in sig_samples]
 
-	plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='model comparison ROC binned strategy ' + strategy.title_str + ' ' + binned_sigs[0].name, log_x=True, plot_name='ROC_binned_logTPR_' + strategy.file_str + '_' + binned_sigs[0].name, fig_dir=fig_dir)
+        neg_class_losses = [strategy(b) for b in binned_bgs]
+        pos_class_losses = [strategy(s) for s in binned_sigs]
 
+        plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='model comparison ROC binned strategy ' + strategy.title_str + ' ' + binned_sigs[0].name, log_x=True, plot_name='ROC_binned_logTPR_' + strategy.file_str + '_j1M_' + binned_sigs[0].name, fig_dir=fig_dir)
+    elif variable == 'j2M':
+        binned_bgs = [get_mjet_binned_sample_center_bin(s, mass_center,'2') for s in bg_samples]
+        binned_sigs = [get_mjet_binned_sample_center_bin(s, mass_center,'2') for s in sig_samples]
+
+        neg_class_losses = [strategy(b) for b in binned_bgs]
+        pos_class_losses = [strategy(s) for s in binned_sigs]
+
+        plot_roc(neg_class_losses, pos_class_losses, legend=legend, title='model comparison ROC binned strategy ' + strategy.title_str + ' ' + binned_sigs[0].name, log_x=True, plot_name='ROC_binned_logTPR_' + strategy.file_str + '_j2M_' + binned_sigs[0].name, fig_dir=fig_dir)
+    else:
+        print('Error!!!! varaible '+variable+' not known')
 
